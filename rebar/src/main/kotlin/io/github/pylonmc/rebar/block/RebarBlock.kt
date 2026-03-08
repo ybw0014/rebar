@@ -63,8 +63,7 @@ open class RebarBlock internal constructor(val block: Block) : Keyed {
      */
     val schema = RebarBlockSchema.schemaCache.remove(block.position)!!
 
-    val key = schema.key
-    override fun getKey(): NamespacedKey = key
+    override fun getKey(): NamespacedKey = schema.key
 
     val nameTranslationKey = schema.nameTranslationKey
     val loreTranslationKey = schema.loreTranslationKey
