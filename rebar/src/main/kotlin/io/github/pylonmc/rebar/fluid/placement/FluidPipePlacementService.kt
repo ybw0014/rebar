@@ -60,7 +60,7 @@ internal object FluidPipePlacementService : Listener {
 
         // give player pipes
         if (player.gameMode != GameMode.CREATIVE) {
-            player.inventory.removeItemAnySlot(player.inventory.getItem(EquipmentSlot.HAND).asQuantity(result.pipesUsed))
+            player.inventory.getItem(EquipmentSlot.HAND).subtract(result.pipesUsed)
         }
 
         return result.to.point.segment

@@ -54,8 +54,7 @@ internal class FluidPipePlacementTask(
         // Check if player is no longer holding pipes
         // This is specifically to see if the player has thrown the pipes out of their hotbar
         // (scrolling off is handled in FluidPipePlacementService)
-        val hand = player.inventory.getItem(EquipmentSlot.HAND)
-        val rebarItem = RebarItem.fromStack(hand)
+        val rebarItem = RebarItem.fromStack(player.inventory.getItem(EquipmentSlot.HAND))
         if (rebarItem !is FluidPipe) {
             FluidPipePlacementService.cancelConnection(player)
             return
@@ -78,8 +77,7 @@ internal class FluidPipePlacementTask(
         recalculateTarget()
 
         // Check status of placement
-        val playerHas = player.inventory.filter { it.isSimilar(hand) }.sumOf { it.amount }
-        val playerHasEnoughPipes = pipesUsed(origin.position, target.position) <= playerHas
+        val playerHasEnoughPipes = pipesUsed(origin.position, target.position) <= player.inventory.getItem(EquipmentSlot.HAND).amount
         if (player.gameMode != GameMode.CREATIVE && !playerHasEnoughPipes) {
             // Player does not have enough pipes
             isValid = false
