@@ -11,7 +11,8 @@ import io.github.pylonmc.rebar.guide.pages.RootPage
 import io.github.pylonmc.rebar.guide.pages.SearchItemsAndFluidsPage
 import io.github.pylonmc.rebar.guide.pages.base.GuidePage
 import io.github.pylonmc.rebar.guide.pages.base.SimpleDynamicGuidePage
-import io.github.pylonmc.rebar.guide.pages.info.InfoPage
+import io.github.pylonmc.rebar.guide.pages.base.SimpleInfoPage
+import io.github.pylonmc.rebar.guide.pages.help.HelpPage
 import io.github.pylonmc.rebar.guide.pages.item.ItemIngredientsPage
 import io.github.pylonmc.rebar.guide.pages.research.AddonResearchesPage
 import io.github.pylonmc.rebar.guide.pages.research.ResearchItemsPage
@@ -97,6 +98,9 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), RebarInteractor {
         val hiddenResearches: MutableSet<NamespacedKey> = mutableSetOf()
 
         @JvmStatic
+        val infoPages: MutableMap<NamespacedKey, SimpleInfoPage> = mutableMapOf()
+
+        @JvmStatic
         val fluidsPage = object : SimpleDynamicGuidePage(
             rebarKey("fluids"),
             {
@@ -110,10 +114,10 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), RebarInteractor {
         val fluidsButton = PageButton(Material.WATER_BUCKET, fluidsPage)
 
         @JvmStatic
-        val infoPage = InfoPage
+        val helpPage = HelpPage
 
         @JvmStatic
-        val infoButton = PageButton(Material.LANTERN, infoPage)
+        val helpButton = PageButton(Material.LANTERN, helpPage)
 
         @JvmStatic
         val researchesPage = ResearchesPage()
@@ -165,6 +169,9 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), RebarInteractor {
         @JvmStatic
         fun ingredientsButton(input: FluidOrItem) = PageButton(Material.SCULK_SENSOR, ingredientsPage(input))
 
+        @JvmStatic
+        fun infoButton(input: FluidOrItem) = PageButton(Material.NETHER_STAR, infoPage(input.key))
+
         /**
          * Hide an item from showing up in searches
          */
@@ -196,6 +203,15 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), RebarInteractor {
         fun hideResearch(key: NamespacedKey) {
             hiddenResearches.add(key)
         }
+
+        /**
+         * Returns the info page menu for an item or fluid. If no info page exists
+         * for the item already, a new one will be created when this function
+         * is called.
+         */
+        @JvmStatic
+        fun infoPage(key: NamespacedKey)
+            = infoPages.computeIfAbsent(key) { SimpleInfoPage() }
 
         /**
          * Opens the guide to the last page that the player was on
