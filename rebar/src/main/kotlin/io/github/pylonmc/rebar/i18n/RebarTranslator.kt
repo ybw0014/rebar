@@ -233,8 +233,8 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
                     }
                     val translated = GlobalTranslator.render(line.withArguments(concatenatedArguments), locale)
                     if (translated.plainText.isBlank()) return@flatMap emptyList()
-                    LineWrapping.splitByNewlines(translated).flatMap {
-                        LineWrapping.wrapLine(it)
+                    splitByNewlines(translated).flatMap {
+                        wrapLine(it)
                     }
                 }
                 ItemLore.lore(newLore)
