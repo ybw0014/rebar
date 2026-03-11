@@ -497,21 +497,27 @@ private val finishMultiblock = buildCommand("finishmultiblock") {
     }
 }
 
-//private val forceload = buildCommand("forceload") {
-//    argument("radius", IntegerArgumentType.integer(1)) {
-//        executesWithPlayer { player ->
-//            RebarMetrics.onCommandRun("/rb forceload")
-//            val radius = IntegerArgumentType.getInteger(this, "radius")
-//            val center = player.location.chunk
-//            for (x in -radius..radius) {
-//                for (z in -radius..radius) {
-//                    player.world.getChunkAt(center.x + x, center.z + z).isForceLoaded = true
-//                    player.sendMessage("Force loaded chunk at ${center.x + x}, ${center.z + z}")
-//                }
-//            }
-//        }
-//    }
-//}
+private val forceload = buildCommand("forceload") {
+    argument("radius", IntegerArgumentType.integer(1)) {
+        executesWithPlayer { player ->
+            RebarMetrics.onCommandRun("/rb forceload")
+            val radius = IntegerArgumentType.getInteger(this, "radius")
+            val center = player.location.chunk
+            for (x in -radius..radius) {
+                for (z in -radius..radius) {
+                    player.world.getChunkAt(center.x + x, center.z + z).isForceLoaded = true
+                    player.sendMessage(
+                        Component.translatable(
+                            "rebar.message.command.forceload",
+                            RebarArgument.of("x", center.x + x),
+                            RebarArgument.of("z", center.z + z)
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
 
 @JvmSynthetic
 internal val ROOT_COMMAND = buildCommand("rebar") {
@@ -532,6 +538,7 @@ internal val ROOT_COMMAND = buildCommand("rebar") {
     then(exposeRecipeConfig)
     then(confetti)
     then(finishMultiblock)
+    then(forceload)
 }
 
 @JvmSynthetic

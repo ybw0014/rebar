@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority
 import io.github.pylonmc.rebar.addon.RebarAddon
 import io.github.pylonmc.rebar.async.BukkitMainThreadDispatcher
 import io.github.pylonmc.rebar.async.ChunkScope
+import io.github.pylonmc.rebar.async.PlayerScope
 import io.github.pylonmc.rebar.block.*
 import io.github.pylonmc.rebar.block.base.*
 import io.github.pylonmc.rebar.block.base.RebarFallingBlock.RebarFallingBlockEntity
@@ -160,6 +161,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(TabbedGuidePage, this)
         pm.registerEvents(RebarTickingEntity, this)
         pm.registerEvents(ChunkScope, this)
+        pm.registerEvents(PlayerScope, this)
 
         // Rebar Blocks
         BlockListener.register(this, pm)
