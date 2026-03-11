@@ -176,7 +176,7 @@ publishing {
         create<MavenPublication>("maven") {
             artifactId = "rebar"
 
-            artifact(tasks.jar)
+            artifact(tasks.shadowJar)
             artifact(tasks.kotlinSourcesJar)
             artifact(javadocJar)
 
