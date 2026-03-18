@@ -101,6 +101,7 @@ message:
     finishmultiblock:
       failed: "<red>You are not looking at a multiblock"
       success: "Finished the multiblock"
+    forceload: "Force loaded chunk at %x%, %z%"
 
   waila:
     type-disabled: "<red>This server no longer permits the your previously set %type% WAILA display type, it has been reset to default"
@@ -585,6 +586,9 @@ unit:
     singular: "item per second"
     plural: "items per second"
     abbr: "items/s"
+  stacks:
+    singular: "stack"
+    plural: "stacks"
   cycles_per_second:
     singular: "cycle per second"
     plural: "cycles per second"

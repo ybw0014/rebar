@@ -144,7 +144,7 @@ internal object BlockListener : MultiListener {
             return
         }
 
-        val blockPdc = RebarBlock.serialize(rebarBlock, block.chunk.persistentDataContainer.adapterContext)
+        val blockPdc = RebarBlock.serialize(rebarBlock, block.chunk.persistentDataContainer.adapterContext) ?: return
         val fallingEntity = RebarFallingBlock.RebarFallingBlockEntity(
             rebarBlock.schema,
             blockPdc,
@@ -195,7 +195,9 @@ internal object BlockListener : MultiListener {
         val block = BlockStorage.get(event.block) ?: return
         val context = BlockBreakContext.PlayerBreak(event);
         if (priority == EventPriority.LOWEST) {
-            if (!BlockStorage.preBreakBlock(block, context)) {
+            val schema = block.defaultItem
+            if ((schema != null && !event.player.canUse(schema, true))
+                || !BlockStorage.preBreakBlock(block, context)) {
                 event.isCancelled = true
                 return
             }

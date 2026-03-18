@@ -30,11 +30,7 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil
 import io.papermc.paper.datacomponent.DataComponentTypes
 import me.tofaa.entitylib.meta.display.ItemDisplayMeta
 import net.kyori.adventure.key.Key
-import org.bukkit.Bukkit
-import org.bukkit.Keyed
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.World
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
@@ -56,7 +52,7 @@ import org.bukkit.persistence.PersistentDataContainer
  *
  * @see BlockStorage
  */
-open class RebarBlock internal constructor(val block: Block) : Keyed {
+open class RebarBlock private constructor(val block: Block) : Keyed {
 
     /**
      * All the data needed to create or load the block.
@@ -107,7 +103,7 @@ open class RebarBlock internal constructor(val block: Block) : Keyed {
     /**
      * This constructor is called when a *new* block is created in the world.
      */
-    constructor(block: Block, context: BlockCreateContext) : this(block)
+    constructor(block: Block, @Suppress("unused") context: BlockCreateContext) : this(block)
 
     /**
      * This constructor is called when the block is loaded. For example, if the server
@@ -121,7 +117,7 @@ open class RebarBlock internal constructor(val block: Block) : Keyed {
      *
      * @see PersistentDataContainer
      */
-    constructor(block: Block, pdc: PersistentDataContainer) : this(block)
+    constructor(block: Block, @Suppress("unused") pdc: PersistentDataContainer) : this(block)
 
     /**
      * Called after the load constructor.
@@ -359,20 +355,26 @@ open class RebarBlock internal constructor(val block: Block) : Keyed {
         internal fun serialize(
             block: RebarBlock,
             context: PersistentDataAdapterContext
-        ): PersistentDataContainer {
-            // See PhantomBlock docs for why we do this
-            if (block is PhantomBlock) {
-                return block.pdc
+        ): PersistentDataContainer? {
+            return try {
+                // See PhantomBlock docs for why we do this
+                if (block is PhantomBlock) {
+                    return block.pdc
+                }
+
+                val pdc = context.newPersistentDataContainer()
+                pdc.set(rebarBlockKeyKey, RebarSerializers.NAMESPACED_KEY, block.schema.key)
+                pdc.set(rebarBlockPositionKey, RebarSerializers.LONG, block.block.position.asLong)
+
+                block.write(pdc)
+                RebarBlockSerializeEvent(block.block, block, pdc, false).callEvent()
+
+                pdc
+            } catch (e: Exception) {
+                Rebar.logger.severe { "Failed to save block at ${block.block.location} of type ${block.key}" }
+                e.printStackTrace()
+                null
             }
-
-            val pdc = context.newPersistentDataContainer()
-            pdc.set(rebarBlockKeyKey, RebarSerializers.NAMESPACED_KEY, block.schema.key)
-            pdc.set(rebarBlockPositionKey, RebarSerializers.LONG, block.block.position.asLong)
-
-            block.write(pdc)
-            RebarBlockSerializeEvent(block.block, block, pdc, false).callEvent()
-
-            return pdc
         }
 
         @JvmSynthetic
