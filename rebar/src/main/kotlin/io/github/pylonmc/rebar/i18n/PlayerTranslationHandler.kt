@@ -21,7 +21,6 @@ import org.jetbrains.annotations.ApiStatus
 class PlayerTranslationHandler internal constructor(private val player: Player) {
     companion object {
         val FOOTER_APPENDED = rebarKey("footer_appended")
-
     }
 
     fun handleItem(stack: ItemStack) {
