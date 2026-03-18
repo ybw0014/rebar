@@ -42,7 +42,7 @@ interface NmsAccessor {
 
     fun handleRecipeBookClick(event: PlayerRecipeBookClickEvent)
 
-    fun hasTrackers(entity: Entity): Boolean
+    fun hasTracker(entity: Entity): Boolean
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")

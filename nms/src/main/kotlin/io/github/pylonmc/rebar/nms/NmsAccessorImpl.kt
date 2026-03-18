@@ -144,7 +144,7 @@ object NmsAccessorImpl : NmsAccessor {
         }
     }
 
-    override fun hasTrackers(entity: Entity): Boolean {
+    override fun hasTracker(entity: Entity): Boolean {
         val id = entity.entityId
         return (entity.world as CraftWorld).handle.chunkSource.chunkMap.entityMap.get(id)?.seenBy?.isNotEmpty() ?: false
     }
