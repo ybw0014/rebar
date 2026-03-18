@@ -20,7 +20,8 @@ import org.jetbrains.annotations.ApiStatus
 @ApiStatus.Internal
 class PlayerTranslationHandler internal constructor(private val player: Player) {
     companion object {
-        val STOP_ADDING_THAT = rebarKey("stop_adding_that")
+        val FOOTER_APPENDED = rebarKey("footer_appended")
+
     }
 
     fun handleItem(stack: ItemStack) {
@@ -29,27 +30,23 @@ class PlayerTranslationHandler internal constructor(private val player: Player) 
 
         stack.translate(player.locale(), placeholders)
 
-        if (rebarItem != null) {
-            val isPresent = stack.persistentDataContainer.get(STOP_ADDING_THAT, RebarSerializers.BOOLEAN) ?: false
-
-            if (!isPresent) {
-                stack.editData(DataComponentTypes.LORE) { lore ->
-                    val newLore = lore.lines().toMutableList()
-                    newLore.add(GlobalTranslator.render(rebarItem.addon.footerName, player.locale()))
-                    if (rebarItem.isDisabled) {
-                        newLore.add(
-                            GlobalTranslator.render(
-                                Component.translatable("rebar.message.disabled.lore"),
-                                player.locale()
-                            )
+        if (rebarItem != null && !stack.persistentDataContainer.has(FOOTER_APPENDED)) {
+            stack.editData(DataComponentTypes.LORE) { lore ->
+                val newLore = lore.lines().toMutableList()
+                newLore.add(GlobalTranslator.render(rebarItem.addon.footerName, player.locale()))
+                if (rebarItem.isDisabled) {
+                    newLore.add(
+                        GlobalTranslator.render(
+                            Component.translatable("rebar.message.disabled.lore"),
+                            player.locale()
                         )
-                    }
-                    ItemLore.lore(newLore)
+                    )
                 }
+                ItemLore.lore(newLore)
+            }
 
-                stack.editPersistentDataContainer {
-                    it.set(STOP_ADDING_THAT, RebarSerializers.BOOLEAN, true)
-                }
+            stack.editPersistentDataContainer {
+                it.set(FOOTER_APPENDED, RebarSerializers.BOOLEAN, true)
             }
         }
 
