@@ -37,13 +37,13 @@ class LogisticGroup(
 
         @JvmStatic
         fun getVanillaLogisticSlots(block: Block?): Map<String, LogisticGroup> {
-            return when (val blockData = block?.state) {
-                is Furnace -> mapOf<String, LogisticGroup>(
+            return when (val blockData = block?.getState(false)) {
+                is Furnace -> mapOf(
                     "input" to LogisticGroup(LogisticGroupType.INPUT, VanillaInventoryLogisticSlot(blockData.inventory, 0)),
                     "fuel" to LogisticGroup(LogisticGroupType.INPUT, FurnaceFuelLogisticSlot(blockData.inventory, 1)),
                     "output" to LogisticGroup(LogisticGroupType.OUTPUT, VanillaInventoryLogisticSlot(blockData.inventory, 2)),
                 )
-                is BrewingStand -> mapOf<String, LogisticGroup>(
+                is BrewingStand -> mapOf(
                     "output" to LogisticGroup(LogisticGroupType.BOTH,
                         BrewingStandPotionLogisticSlot(blockData.inventory, 0),
                         BrewingStandPotionLogisticSlot(blockData.inventory, 1),
@@ -57,9 +57,9 @@ class LogisticGroup(
                     for (slot in 0..<blockData.inventory.size) {
                         slots.add(ChiseledBookshelfFuelLogisticSlot(blockData.inventory, slot))
                     }
-                    return mapOf<String, LogisticGroup>("inventory" to LogisticGroup(LogisticGroupType.BOTH, slots))
+                    mapOf("inventory" to LogisticGroup(LogisticGroupType.BOTH, slots))
                 }
-                is Jukebox -> mapOf<String, LogisticGroup>(
+                is Jukebox -> mapOf(
                     "inventory" to LogisticGroup(LogisticGroupType.BOTH, JukeboxLogisticSlot(blockData.inventory, 0)),
                 )
                 is Dispenser, is Dropper, is Hopper, is Barrel, is DoubleChest, is Chest, is Shelf, is ShulkerBox, is Crafter -> {
@@ -67,9 +67,9 @@ class LogisticGroup(
                     for (slot in 0..<blockData.inventory.size) {
                         slots.add(VanillaInventoryLogisticSlot(blockData.inventory, slot))
                     }
-                    return mapOf<String, LogisticGroup>("inventory" to LogisticGroup(LogisticGroupType.BOTH, slots))
+                    mapOf("inventory" to LogisticGroup(LogisticGroupType.BOTH, slots))
                 }
-                else -> mapOf<String, LogisticGroup>()
+                else -> mapOf()
             }
         }
     }
