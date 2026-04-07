@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.particles
+package io.github.pylonmc.rebar.util
 
 import io.github.pylonmc.rebar.Rebar
 import org.bukkit.Location
@@ -14,6 +14,7 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import java.util.Random
 import java.util.function.Consumer
+import kotlin.collections.filter
 
 class ConfettiParticle {
     private val display: BlockDisplay
