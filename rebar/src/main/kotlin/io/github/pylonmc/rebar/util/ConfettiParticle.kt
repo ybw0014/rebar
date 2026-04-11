@@ -14,7 +14,6 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import java.util.Random
 import java.util.function.Consumer
-import kotlin.collections.filter
 
 class ConfettiParticle {
     private val display: BlockDisplay
