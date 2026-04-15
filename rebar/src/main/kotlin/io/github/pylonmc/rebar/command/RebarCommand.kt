@@ -18,9 +18,9 @@ import io.github.pylonmc.rebar.content.guide.RebarGuide
 import io.github.pylonmc.rebar.entity.display.transform.Rotation
 import io.github.pylonmc.rebar.gametest.GameTestConfig
 import io.github.pylonmc.rebar.i18n.RebarArgument
+import io.github.pylonmc.rebar.i18n.customMiniMessage
 import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemSchema
-import io.github.pylonmc.rebar.item.builder.customMiniMessage
 import io.github.pylonmc.rebar.item.research.Research
 import io.github.pylonmc.rebar.item.research.Research.Companion.researchPoints
 import io.github.pylonmc.rebar.item.research.addResearch
