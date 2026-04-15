@@ -634,3 +634,6 @@ fun CoroutineContext.createChildContext(): CoroutineContext = this + Job(this[Jo
  * @return Whether the entity has at least one tracking player, a tracking player is just a player who has & is receiving packets for the entity.
  */
 fun Entity.hasTracker() = NmsAccessor.instance.hasTracker(this)
+
+@JvmField
+val FLUID_EPSILON = 1.0e-6
