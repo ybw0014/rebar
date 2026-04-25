@@ -67,6 +67,8 @@ interface BlockBreakContext {
             get() = event.block
         override val normallyDrops
             get() = event.player.gameMode != GameMode.CREATIVE
+        override val shouldSetToAir
+            get() = false
     }
 
     /**
