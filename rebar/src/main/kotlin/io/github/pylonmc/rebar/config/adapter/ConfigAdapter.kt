@@ -28,39 +28,40 @@ interface ConfigAdapter<T> {
     @Suppress("unused")
     companion object {
         // @formatter:off
-        @JvmField val BYTE = ConfigAdapter { 
-            if (it is String) it.toByte() 
-            check(it is Byte) {"Expected Byte or String, got ${it::class.java.simpleName}"}
-            it
+        @JvmField val BYTE = ConfigAdapter {
+            if (it is String) it.toByte()
+            check(it is Number && it !is Double && it !is Float) {"Expected Byte, got ${it::class.java.simpleName}"}
+            it.toByte()
         }
-        @JvmField val SHORT = ConfigAdapter { 
+        @JvmField val SHORT = ConfigAdapter {
             if (it is String) it.toShort()
-            check(it is Short) {"Expected Short or String, got ${it::class.java.simpleName}"}
-            it
+            check(it is Number && it !is Double && it !is Float) {"Expected Short, got ${it::class.java.simpleName}"}
+            it.toShort()
         }
-        @JvmField val INTEGER = ConfigAdapter { 
+        @JvmField val INTEGER = ConfigAdapter {
             if (it is String) it.toInt()
-            check(it is Int) {"Expected Int or String, got ${it::class.java.simpleName}"}
-            it
+            check(it is Number && it !is Double && it !is Float) {"Expected Integer, got ${it::class.java.simpleName}"}
+            it.toInt()
         }
         @JvmField val INT_RANGE = IntRangeAdapter
         @JvmField val LONG = ConfigAdapter {
             if (it is String) it.toLong()
-            check(it is Long) {"Expected Long or String, got ${it::class.java.simpleName}"}
-            it
+            check(it is Number && it !is Double && it !is Float) {"Expected Long, got ${it::class.java.simpleName}"}
+            it.toLong()
         }
         @JvmField val FLOAT = ConfigAdapter { 
             if (it is String) it.toFloat()
-            check(it is Float) {"Expected Float or String, got ${it::class.java.simpleName}"}
+            check(it is Float || it is Double) {"Expected Float, got ${it::class.java.simpleName}"}
+            it.toFloat()
         }
         @JvmField val DOUBLE = ConfigAdapter { 
             if (it is String) it.toDouble()
-            check(it is Double) {"Expected Double or String, got ${it::class.java.simpleName}"}
-            it
+            check(it is Float || it is Double) {"Expected Double, got ${it::class.java.simpleName}"}
+            it.toDouble()
         }
         @JvmField val CHAR = ConfigAdapter {
             if (it is String && it.length == 1) it[0]
-            check(it is Char) {"Expected Character or String, got ${it::class.java.simpleName}"}
+            check(it is Char) {"Expected Character, got ${it::class.java.simpleName}"}
             it
         }
         @JvmField val BOOLEAN = ConfigAdapter {
