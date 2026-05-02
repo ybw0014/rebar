@@ -28,47 +28,15 @@ interface ConfigAdapter<T> {
     @Suppress("unused")
     companion object {
         // @formatter:off
-        @JvmField val BYTE = ConfigAdapter {
-            if (it is String) return@ConfigAdapter it.toByte()
-            check(it is Number && it !is Double && it !is Float) {"Expected Byte, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it.toByte()
-        }
-        @JvmField val SHORT = ConfigAdapter {
-            if (it is String) return@ConfigAdapter it.toShort()
-            check(it is Number && it !is Double && it !is Float) {"Expected Short, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it.toShort()
-        }
-        @JvmField val INTEGER = ConfigAdapter {
-            if (it is String) return@ConfigAdapter it.toInt()
-            check(it is Number && it !is Double && it !is Float) {"Expected Integer, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it.toInt()
-        }
+        @JvmField val BYTE = numberAdapter(Byte.MIN_VALUE, Byte.MAX_VALUE, Number::toByte)
+        @JvmField val SHORT = numberAdapter(Short.MIN_VALUE, Short.MAX_VALUE, Number::toShort)
+        @JvmField val INTEGER = numberAdapter(Int.MIN_VALUE, Int.MAX_VALUE, Number::toInt)
+        @JvmField val LONG = numberAdapter(Long.MIN_VALUE, Long.MAX_VALUE, Number::toLong)
+        @JvmField val FLOAT = numberAdapter(Float.MIN_VALUE, Float.MAX_VALUE, Number::toFloat)
+        @JvmField val DOUBLE = numberAdapter(Double.MIN_VALUE, Double.MAX_VALUE, Number::toDouble)
         @JvmField val INT_RANGE = IntRangeAdapter
-        @JvmField val LONG = ConfigAdapter {
-            if (it is String) return@ConfigAdapter it.toLong()
-            check(it is Number && it !is Double && it !is Float) {"Expected Long, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it.toLong()
-        }
-        @JvmField val FLOAT = ConfigAdapter { 
-            if (it is String) return@ConfigAdapter it.toFloat()
-            check(it is Number) {"Expected Float, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it.toFloat()
-        }
-        @JvmField val DOUBLE = ConfigAdapter { 
-            if (it is String) return@ConfigAdapter it.toDouble()
-            check(it is Number) {"Expected Double, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it.toDouble()
-        }
-        @JvmField val CHAR = ConfigAdapter {
-            if (it is String && it.length == 1) return@ConfigAdapter it[0]
-            check(it is Char) {"Expected Character, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it
-        }
-        @JvmField val BOOLEAN = ConfigAdapter {
-            if (it is String) return@ConfigAdapter it.toBoolean()
-            check(it is Boolean) {"Expected Boolean, got ${it::class.java.simpleName}"}
-            return@ConfigAdapter it
-        }
+        @JvmField val CHAR = ConfigAdapter { (it as String).single() }
+        @JvmField val BOOLEAN = ConfigAdapter { it as Boolean }
         @JvmField val ANY = ConfigAdapter { it }
 
         @JvmField val STRING = ConfigAdapter { it.toString() }
@@ -173,6 +141,24 @@ interface ConfigAdapter<T> {
         @JvmField val CONTRIBUTOR = ContributorConfigAdapter
         @JvmField val TEXT_COLOR = TextColorConfigAdapter
         // @formatter:on
+
+        private inline fun <reified T : Number> numberAdapter(
+            min: T,
+            max: T,
+            crossinline toType: Number.() -> T
+        ): ConfigAdapter<T> = ConfigAdapter { value ->
+            if (value is String) return@ConfigAdapter value.toDouble().toType()
+
+            check (value is Number) { "Expect ${Number::class.java}, got ${value::class.java}" }
+            if (value is Float || value is Double) {
+                check(min is Float || min is Double) { "Expect ${min::class.java}, got ${value::class.java}" }
+            }
+
+            if (min !is Double) {
+                check(min.toDouble() <= value.toDouble() && value.toDouble() <= max.toDouble()) { "Expect ${min::class.java}, got ${value::class.java}" }
+            }
+            return@ConfigAdapter value.toDouble().toType()
+        }
     }
 }
 
