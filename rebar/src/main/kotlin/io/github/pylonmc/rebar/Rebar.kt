@@ -21,6 +21,7 @@ import io.github.pylonmc.rebar.content.debug.DebugWaxedWeatheredCutCopperStairs
 import io.github.pylonmc.rebar.content.fluid.*
 import io.github.pylonmc.rebar.content.guide.RebarGuide
 import io.github.pylonmc.rebar.culling.BlockCullingEngine
+import io.github.pylonmc.rebar.entity.ConfettiCreeperListener
 import io.github.pylonmc.rebar.entity.EntityListener
 import io.github.pylonmc.rebar.entity.EntityStorage
 import io.github.pylonmc.rebar.entity.RebarEntity
@@ -162,6 +163,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(RebarTickingEntity, this)
         pm.registerEvents(ChunkScope, this)
         pm.registerEvents(PlayerScope, this)
+        ConfettiCreeperListener.register(this, pm)
 
         // Rebar Blocks
         BlockListener.register(this, pm)

@@ -417,13 +417,13 @@ private val confetti = buildCommand("confetti") {
         permission("rebar.command.confetti")
         executesWithPlayer { player ->
             RebarMetrics.onCommandRun("/rb confetti")
-            ConfettiParticle.spawnMany(player.location, IntegerArgumentType.getInteger(this, "amount")).run()
+            ConfettiParticle.spawnMany(player.location, IntegerArgumentType.getInteger(this, "amount")).get()
         }
         argument("speed", DoubleArgumentType.doubleArg(0.0)) {
             permission("rebar.command.confetti")
             executesWithPlayer { player ->
                 RebarMetrics.onCommandRun("/rb confetti")
-                ConfettiParticle.spawnMany(player.location, IntegerArgumentType.getInteger(this, "amount"), DoubleArgumentType.getDouble(this, "speed")).run()
+                ConfettiParticle.spawnMany(player.location, IntegerArgumentType.getInteger(this, "amount"), DoubleArgumentType.getDouble(this, "speed")).get()
             }
             argument("lifetime", IntegerArgumentType.integer(1)) {
                 permission("rebar.command.confetti")
@@ -434,7 +434,7 @@ private val confetti = buildCommand("confetti") {
                         IntegerArgumentType.getInteger(this, "amount"),
                         DoubleArgumentType.getDouble(this, "speed"),
                         IntegerArgumentType.getInteger(this, "lifetime")
-                    ).run()
+                    ).get()
                 }
             }
         }

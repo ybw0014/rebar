@@ -60,6 +60,19 @@ object RebarConfig {
     @JvmField
     val CARGO_TRANSFER_RATE_MULTIPLIER = config.getOrThrow("cargo-transfer-rate-multiplier", ConfigAdapter.INTEGER)
 
+    object ConfettiCreeperConfig {
+
+        @JvmField
+        val CHANCE = config.getOrThrow("confetti-creeper.chance", ConfigAdapter.DOUBLE)
+
+        @JvmField
+        val AMOUNT = config.getOrThrow("confetti-creeper.confetti-amount", ConfigAdapter.INTEGER)
+
+        @JvmField
+        val LIFETIME = config.getOrThrow("confetti-creeper.confetti-lifetime", ConfigAdapter.INTEGER)
+
+    }
+
     object ResearchConfig {
 
         @JvmField
