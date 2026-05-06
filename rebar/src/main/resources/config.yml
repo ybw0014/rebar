@@ -29,7 +29,7 @@ inventory-ticker-base-rate: 10
 
 confetti-creeper:
   # The chance for a creeper to explode into confetti instead of a normal explosion, 0 = 0% chance, 1 = 100% chance
-  chance: 0.0
+  chance: 0.001
   # How much confetti should a confetti creeper explode into
   confetti-amount: 250
   # How long the confetti should last in ticks before disappearing
