@@ -47,10 +47,10 @@ class ConfettiParticle {
                 Vector3f(0.2f, 0.01f, 0.2f),
                 AxisAngle4f()
             )
-            d.teleportDuration = TICK_AMOUNT.toInt()
+            d.teleportDuration = TICK_AMOUNT
             d.isPersistent = false
         })
-        this.lifetime = Math.ceilDiv(lifetime, 2)
+        this.lifetime = Math.ceilDiv(lifetime, TICK_AMOUNT)
 
         // Random initial velocity
         this.velocity = velocity.clone()
@@ -119,14 +119,14 @@ class ConfettiParticle {
                     val despawning = age == lifetime
                     val t = display.transformation
                     display.interpolationDelay = 0
-                    display.interpolationDuration = if (despawning) 10 else TICK_AMOUNT.toInt()
+                    display.interpolationDuration = if (despawning) 10 else TICK_AMOUNT
                     display.transformation = Transformation(
                         t.translation,
                         leftRotation,
                         if (despawning) Vector3f(0f) else t.scale,
                         t.rightRotation
                     )
-                    delayTicks(if (despawning) 10 else TICK_AMOUNT)
+                    delayTicks(if (despawning) 10 else TICK_AMOUNT.toLong())
                 } catch (_: Exception) {
                     remove()
                     break
@@ -151,8 +151,8 @@ class ConfettiParticle {
          * There are a few cases where particles would all immediately die when spawning
          * this is to ensure they last at least 1 second.
          */
-        private const val IMMORTAL_AGE = 10
-        private const val TICK_AMOUNT = 2L
+        private const val IMMORTAL_AGE = 7
+        private const val TICK_AMOUNT = 3
 
         const val DEFAULT_SPEED = 1.0
         const val DEFAULT_LIFETIME = 600
