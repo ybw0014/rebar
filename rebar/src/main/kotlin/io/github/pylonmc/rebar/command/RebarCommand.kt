@@ -48,10 +48,14 @@ import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import org.bukkit.Location
+import org.bukkit.command.BlockCommandSender
+import org.bukkit.command.CommandException
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.util.Vector
 import kotlin.reflect.typeOf
 import io.papermc.paper.math.BlockPosition as PaperBlockPosition
 
@@ -415,26 +419,65 @@ private val exposeRecipeConfig = buildCommand("exposerecipeconfig") {
 private val confetti = buildCommand("confetti") {
     argument("amount", IntegerArgumentType.integer(1)) {
         permission("rebar.command.confetti")
-        executesWithPlayer { player ->
+        executes { _ ->
             RebarMetrics.onCommandRun("/rb confetti")
-            ConfettiParticle.spawnMany(player.location, IntegerArgumentType.getInteger(this, "amount")).get()
+            ConfettiParticle.spawnMany(source.location, IntegerArgumentType.getInteger(this, "amount")).get()
         }
         argument("speed", DoubleArgumentType.doubleArg(0.0)) {
             permission("rebar.command.confetti")
-            executesWithPlayer { player ->
+            executes { _ ->
                 RebarMetrics.onCommandRun("/rb confetti")
-                ConfettiParticle.spawnMany(player.location, IntegerArgumentType.getInteger(this, "amount"), DoubleArgumentType.getDouble(this, "speed")).get()
+                ConfettiParticle.spawnMany(source.location, IntegerArgumentType.getInteger(this, "amount"), DoubleArgumentType.getDouble(this, "speed")).get()
             }
             argument("lifetime", IntegerArgumentType.integer(1)) {
                 permission("rebar.command.confetti")
-                executesWithPlayer { player ->
+                executes { _ ->
                     RebarMetrics.onCommandRun("/rb confetti")
                     ConfettiParticle.spawnMany(
-                        player.location,
+                        source.location,
                         IntegerArgumentType.getInteger(this, "amount"),
                         DoubleArgumentType.getDouble(this, "speed"),
                         IntegerArgumentType.getInteger(this, "lifetime")
                     ).get()
+                }
+                argument("direction", ArgumentTypes.finePosition()) {
+                    permission("rebar.command.confetti")
+                    executes { _ ->
+                        RebarMetrics.onCommandRun("/rb confetti")
+                        val velocity = getArgument("direction", FinePositionResolver::class.java).resolve(source).toVector()
+                            .normalize().multiply(DoubleArgumentType.getDouble(this, "speed"))
+                        for (i in 1..IntegerArgumentType.getInteger(this, "amount")) {
+                            ConfettiParticle(
+                                source.location,
+                                velocity,
+                                IntegerArgumentType.getInteger(this, "lifetime"),
+                                ConfettiParticle.randomMaterial()
+                            )
+                        }
+                    }
+                    argument("spread", DoubleArgumentType.doubleArg(0.0)) {
+                        permission("rebar.command.confetti")
+                        executes { _ ->
+                            RebarMetrics.onCommandRun("/rb confetti")
+                            val direction = getArgument("direction", FinePositionResolver::class.java).resolve(source).toVector()
+                            val speed = DoubleArgumentType.getDouble(this, "speed")
+                            val spread = DoubleArgumentType.getDouble(this, "spread")
+                            for (i in 1..IntegerArgumentType.getInteger(this, "amount")) {
+                                ConfettiParticle(
+                                    source.location,
+                                    direction.clone().add(
+                                        Vector(
+                                            (Math.random() - 0.5) * spread,
+                                            (Math.random() - 0.5) * spread,
+                                            (Math.random() - 0.5) * spread
+                                        )
+                                    ).normalize().multiply(speed),
+                                    IntegerArgumentType.getInteger(this, "lifetime"),
+                                    ConfettiParticle.randomMaterial()
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

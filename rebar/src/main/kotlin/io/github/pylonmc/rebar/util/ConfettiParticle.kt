@@ -8,6 +8,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.entity.BlockDisplay
+import org.bukkit.entity.Display
 import org.bukkit.util.BoundingBox
 import org.bukkit.util.Transformation
 import org.bukkit.util.Vector
@@ -19,19 +20,21 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 
 class ConfettiParticle {
-    private val display: BlockDisplay
-    private var age = 0
-    private val lifetime: Int
-    private val job: Job
+    val display: BlockDisplay
+    var age = 0
+        private set
+    val lifetime: Int
+    val job: Job
 
-    private val velocity: Vector
-    private val angularVelocity: Vector
+    val velocity: Vector
+    val angularVelocity: Vector
 
-    private var rotationX = 0.0
-    private var rotationY = 0.0
-    private var rotationZ = 0.0
+    var rotationX = 0.0
+    var rotationY = 0.0
+    var rotationZ = 0.0
 
-    private var block: Block? = null
+    var block: Block? = null
+        private set
 
     constructor(location: Location, velocity: Vector, lifetime: Int, material: Material) {
         val world = location.getWorld()
@@ -50,7 +53,7 @@ class ConfettiParticle {
         this.lifetime = Math.ceilDiv(lifetime, 2)
 
         // Random initial velocity
-        this.velocity = velocity
+        this.velocity = velocity.clone()
 
         // Random angular velocity (degrees per tick)
         this.angularVelocity = Vector(
@@ -180,6 +183,11 @@ class ConfettiParticle {
             }
 
             return Supplier { output.map(Supplier<ConfettiParticle>::get) }
+        }
+
+        @JvmStatic
+        fun randomMaterial() : Material {
+            return CONCRETES.random()
         }
     }
 }
