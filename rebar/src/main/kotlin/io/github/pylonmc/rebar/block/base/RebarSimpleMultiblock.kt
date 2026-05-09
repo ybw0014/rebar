@@ -16,6 +16,7 @@ import io.github.pylonmc.rebar.waila.WailaDisplay
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.Registry
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.BlockData
@@ -125,10 +126,16 @@ interface RebarSimpleMultiblock : RebarMultiblock, RebarGhostBlockHolder, RebarE
                 blockDatas.toList(), listOf()
             )
 
+            /**
+             * Accepts vanilla keys (`minecraft:grass`) or Rebar keys (`pylon:copper_sheet`)
+             */
             @JvmStatic
-            fun of(vararg keys: NamespacedKey) = MultiblockComponent(
-                listOf(), keys.toList()
-            )
+            fun of(vararg keys: NamespacedKey): MultiblockComponent {
+                val vanilla = keys.filter { it.asString().startsWith("minecraft") }
+                    .map { Registry.MATERIAL.getOrThrow(it).createBlockData() }
+                val rebar = keys.filter { !it.asString().startsWith("minecraft") }
+                return MultiblockComponent(vanilla, rebar)
+            }
         }
     }
 
