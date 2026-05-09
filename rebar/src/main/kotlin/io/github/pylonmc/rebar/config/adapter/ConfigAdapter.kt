@@ -151,7 +151,7 @@ interface ConfigAdapter<T> {
 
             check (value is Number) { "Expect ${Number::class.java}, got ${value::class.java}" }
             if (value is Float || value is Double) {
-                check(min is Float || min is Double) { "Expect ${min::class.java}, got ${value::class.java}" }
+                check(min is Float || min is Double) { "Expected ${T::class.java.canonicalName}, got ${value::class.java.canonicalName}" }
             }
 
             if (min !is Double) {
