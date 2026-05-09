@@ -153,7 +153,7 @@ class Research(
         private val researchSoundsKey = rebarKey("research_sounds")
         private val guideHintsKey = rebarKey("guide_hints")
         private val researchesType =
-            RebarSerializers.SET.setTypeFrom(RebarSerializers.KEYED.keyedTypeFrom(RebarRegistry.RESEARCHES::getOrThrow))
+            RebarSerializers.LIST.listTypeFrom(RebarSerializers.NAMESPACED_KEY)
 
         @JvmStatic
         var Player.researchPoints: Long by persistentData(researchPointsKey, RebarSerializers.LONG, 0)
@@ -168,18 +168,18 @@ class Research(
         var Player.guideHints: Boolean by persistentData(guideHintsKey, RebarSerializers.BOOLEAN, true)
 
         @JvmStatic
-        fun getResearches(player: OfflinePlayer): Set<Research> {
+        fun getResearches(player: OfflinePlayer): List<Research> {
             val researches = player.persistentDataContainer.get(researchesKey, researchesType)
             if (researches == null && player is Player) {
-                setResearches(player, setOf())
-                return setOf()
+                setResearches(player, listOf())
+                return listOf()
             }
-            return researches!!
+            return researches!!.mapNotNull { RebarRegistry.RESEARCHES[it] }
         }
 
         @JvmStatic
-        fun setResearches(player: Player, researches: Set<Research>)
-            = player.persistentDataContainer.set(researchesKey, researchesType, researches)
+        fun setResearches(player: Player, researches: List<Research>)
+            = player.persistentDataContainer.set(researchesKey, researchesType, researches.map { it.key })
 
         @JvmStatic
         fun addResearch(player: Player, research: Research)
@@ -297,8 +297,7 @@ class Research(
         private fun onPlayerPickup(event: EntityPickupItemEvent) {
             val entity = event.entity
             if (entity is Player) {
-                val schema = RebarItemSchema.fromStack(event.item.itemStack)
-                if (schema == null) return
+                val schema = RebarItemSchema.fromStack(event.item.itemStack) ?: return
 
                 if (!entity.canPickUp(schema, sendMessage = true)) {
                     // See net.minecraft.world.entity.item.ItemEntity#setDefaultPickUpDelay
