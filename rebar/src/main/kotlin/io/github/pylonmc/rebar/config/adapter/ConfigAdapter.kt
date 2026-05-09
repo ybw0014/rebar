@@ -155,7 +155,7 @@ interface ConfigAdapter<T> {
             }
 
             if (min !is Double) {
-                check(min.toDouble() <= value.toDouble() && value.toDouble() <= max.toDouble()) { "Expect ${min::class.java}, got ${value::class.java}" }
+                check(value.toDouble() in (min.toDouble())..(max.toDouble())) { "Expected value between $min and $max, got $value" }
             }
             return@ConfigAdapter value.toDouble().toType()
         }
