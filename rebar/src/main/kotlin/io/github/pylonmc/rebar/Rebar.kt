@@ -164,6 +164,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(RebarTickingEntity, this)
         pm.registerEvents(ChunkScope, this)
         pm.registerEvents(PlayerScope, this)
+        pm.registerEvents(RebarJoinHandler, this)
         ConfettiCreeperListener.register(this, pm)
 
         // Rebar Blocks
