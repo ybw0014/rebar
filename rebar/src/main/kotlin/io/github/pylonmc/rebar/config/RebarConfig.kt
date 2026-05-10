@@ -63,6 +63,19 @@ object RebarConfig {
     @JvmField
     val GHOST_BLOCK_TICK_INTERVAL = config.getOrThrow("ghost-block-tick-interval", ConfigAdapter.INTEGER)
 
+    object ConfettiCreeperConfig {
+
+        @JvmField
+        val CHANCE = config.getOrThrow("confetti-creeper.chance", ConfigAdapter.DOUBLE)
+
+        @JvmField
+        val AMOUNT = config.getOrThrow("confetti-creeper.confetti-amount", ConfigAdapter.INTEGER)
+
+        @JvmField
+        val LIFETIME = config.getOrThrow("confetti-creeper.confetti-lifetime", ConfigAdapter.INTEGER)
+
+    }
+
     object ResearchConfig {
 
         @JvmField
