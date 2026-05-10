@@ -4,25 +4,28 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import io.github.pylonmc.rebar.item.ItemTypeWrapper
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.papermc.paper.command.brigadier.MessageComponentSerializer
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType
 import net.kyori.adventure.text.Component
-import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
+import org.bukkit.Registry
+import org.bukkit.inventory.ItemStack
 import java.util.concurrent.CompletableFuture
 
-class RegistryCommandArgument<T : Keyed>(private val registry: RebarRegistry<T>) :
-    CustomArgumentType.Converted<T, NamespacedKey> {
-
-    @Suppress("PrivatePropertyName")
+object DualItemRegistryCommandArgument : CustomArgumentType.Converted<ItemStack, NamespacedKey> {
     private val ERROR_UNKNOWN = DynamicCommandExceptionType {
-        MessageComponentSerializer.message().serialize(Component.text("Unknown key in ${registry.key}: $it"))
+        MessageComponentSerializer.message().serialize(Component.text("Unknown item key: $it"))
     }
 
-    override fun convert(nativeType: NamespacedKey): T {
-        return registry[nativeType] ?: throw ERROR_UNKNOWN.create(nativeType)
+    override fun convert(nativeType: NamespacedKey): ItemStack {
+        return try {
+            ItemTypeWrapper.invoke(nativeType).createItemStack()
+        } catch (_: IllegalArgumentException) {
+            throw ERROR_UNKNOWN.create(nativeType)
+        }
     }
 
     override fun <S : Any> listSuggestions(
@@ -30,7 +33,12 @@ class RegistryCommandArgument<T : Keyed>(private val registry: RebarRegistry<T>)
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
         val input = builder.remainingLowerCase
-        for (key in registry.getKeys()) {
+        for (key in Registry.ITEM.keyStream()) {
+            if (input in key.toString()) {
+                builder.suggest(key.toString())
+            }
+        }
+        for (key in RebarRegistry.ITEMS.getKeys()) {
             if (input in key.toString()) {
                 builder.suggest(key.toString())
             }

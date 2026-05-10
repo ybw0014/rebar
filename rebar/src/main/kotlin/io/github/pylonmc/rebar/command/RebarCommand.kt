@@ -20,17 +20,16 @@ import io.github.pylonmc.rebar.gametest.GameTestConfig
 import io.github.pylonmc.rebar.i18n.RebarArgument
 import io.github.pylonmc.rebar.i18n.customMiniMessage
 import io.github.pylonmc.rebar.item.RebarItem
-import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.item.research.Research
 import io.github.pylonmc.rebar.item.research.Research.Companion.researchPoints
 import io.github.pylonmc.rebar.item.research.addResearch
 import io.github.pylonmc.rebar.item.research.hasResearch
 import io.github.pylonmc.rebar.item.research.removeResearch
 import io.github.pylonmc.rebar.metrics.RebarMetrics
-import io.github.pylonmc.rebar.util.ConfettiParticle
 import io.github.pylonmc.rebar.recipe.ConfigurableRecipeType
 import io.github.pylonmc.rebar.recipe.RecipeType
 import io.github.pylonmc.rebar.registry.RebarRegistry
+import io.github.pylonmc.rebar.util.ConfettiParticle
 import io.github.pylonmc.rebar.util.mergeGlobalConfig
 import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.github.pylonmc.rebar.util.vanillaDisplayName
@@ -57,6 +56,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
+import kotlin.math.min
 import kotlin.reflect.typeOf
 import io.papermc.paper.math.BlockPosition as PaperBlockPosition
 
@@ -87,21 +88,26 @@ private val guide = buildCommand("guide") {
 
 private val give = buildCommand("give") {
     argument("players", ArgumentTypes.players()) {
-        argument("item", RegistryCommandArgument(RebarRegistry.ITEMS)) {
+        argument("item", DualItemRegistryCommandArgument) {
             // Why does Brigadier not support default values for arguments?
             // https://github.com/Mojang/brigadier/issues/110
 
             fun givePlayers(context: CommandContext<CommandSourceStack>, amount: Int) {
-                val item = context.getArgument<RebarItemSchema>("item")
+                val item = context.getArgument<ItemStack>("item")
                 val players = context.getArgument<List<Player>>("players")
                 val singular = players.size == 1
                 for (player in players) {
-                    player.inventory.addItem(item.getItemStack().asQuantity(amount))
+                    var remaining = amount
+                    while (remaining > 0) {
+                        val giving = item.asQuantity(min(remaining, item.maxStackSize))
+                        remaining -= giving.amount
+                        player.give(giving)
+                    }
                 }
                 context.source.sender.sendVanillaFeedback(
                     "give.success." + if (singular) "single" else "multiple",
                     Component.text(amount),
-                    item.getOriginalTemplate().vanillaDisplayName(),
+                    item.vanillaDisplayName(),
                     if (singular) players[0].name() else Component.text(players.size)
                 )
             }
