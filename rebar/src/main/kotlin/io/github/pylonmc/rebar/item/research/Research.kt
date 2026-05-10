@@ -105,7 +105,7 @@ class Research(
                 val multiplier = (cost?.toDouble() ?: 0.0) * RebarConfig.ResearchConfig.MULTIPLIER_CONFETTI_AMOUNT
                 val amount = (RebarConfig.ResearchConfig.BASE_CONFETTI_AMOUNT * multiplier).toInt()
                 val spawnedConfetti = min(amount, RebarConfig.ResearchConfig.MAX_CONFETTI_AMOUNT)
-                ConfettiParticle.spawnMany(player.location, spawnedConfetti).run()
+                ConfettiParticle.spawnMany(player.location, spawnedConfetti).get()
             }
 
             if (player.researchSounds) {
