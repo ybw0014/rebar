@@ -6,25 +6,21 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
 /**
- * Represents a [RebarItem] that has special behavior when a player rejoins the server.
- * This interface allows items to perform actions or update their state when a player reconnects.
+ * Represents a [RebarItem] that has special behavior when a player joins the server.
+ * This interface allows items to perform actions or update their state when a player joins.
  */
-interface RebarRejoinHandler {
+interface RebarJoinHandler {
     /**
-     * This is only called for players who have played before (not first-time players).
+     * Called when the player joins the server
      */
     fun onRejoin(event: PlayerJoinEvent)
 
     companion object : Listener {
         @EventHandler
         fun onRejoin(event : PlayerJoinEvent) {
-            if (event.player.firstPlayed == 0L) {
-                return
-            }
-
             for (item in event.player.inventory) {
                 val rebarItem = RebarItem.fromStack(item)
-                if (rebarItem is RebarRejoinHandler) {
+                if (rebarItem is RebarJoinHandler) {
                     rebarItem.onRejoin(event)
                 }
             }

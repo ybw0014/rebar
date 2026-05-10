@@ -162,7 +162,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(RebarTickingEntity, this)
         pm.registerEvents(ChunkScope, this)
         pm.registerEvents(PlayerScope, this)
-        pm.registerEvents(RebarRejoinHandler, this)
+        pm.registerEvents(RebarJoinHandler, this)
 
         // Rebar Blocks
         BlockListener.register(this, pm)
