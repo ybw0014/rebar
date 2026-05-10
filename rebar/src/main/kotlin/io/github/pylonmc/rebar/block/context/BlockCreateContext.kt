@@ -69,6 +69,7 @@ interface BlockCreateContext {
         override val facingVertical: BlockFace = BlockFace.NORTH,
         override val block: Block,
         override val item: ItemStack? = null,
+        override val shouldSetType: Boolean = true,
     ) : BlockCreateContext
 
     /**
