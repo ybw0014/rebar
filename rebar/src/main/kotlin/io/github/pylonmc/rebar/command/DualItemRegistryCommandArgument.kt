@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.github.pylonmc.rebar.item.ItemTypeWrapper
+import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.papermc.paper.command.brigadier.MessageComponentSerializer
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
@@ -21,9 +22,24 @@ object DualItemRegistryCommandArgument : CustomArgumentType.Converted<ItemStack,
     }
 
     override fun convert(nativeType: NamespacedKey): ItemStack {
-        return try {
-            ItemTypeWrapper.invoke(nativeType).createItemStack()
+        try {
+            return ItemTypeWrapper.invoke(nativeType).createItemStack()
         } catch (_: IllegalArgumentException) {
+            if (nativeType.namespace == "minecraft") {
+                var found: RebarItemSchema? = null
+                for (schema in RebarRegistry.ITEMS) {
+                    if (schema.key.key == nativeType.key) {
+                        if (found != null) {
+                            throw ERROR_UNKNOWN.create(nativeType)
+                        }
+                        found = schema
+                    }
+                }
+
+                if (found != null) {
+                    return found.getItemStack()
+                }
+            }
             throw ERROR_UNKNOWN.create(nativeType)
         }
     }
