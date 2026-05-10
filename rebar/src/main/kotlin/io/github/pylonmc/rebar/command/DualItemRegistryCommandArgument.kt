@@ -25,6 +25,7 @@ object DualItemRegistryCommandArgument : CustomArgumentType.Converted<ItemStack,
         try {
             return ItemTypeWrapper.invoke(nativeType).createItemStack()
         } catch (_: IllegalArgumentException) {
+            // if no namespace is provided in the command execution, it uses the minecraft namespace
             if (nativeType.namespace == "minecraft") {
                 var found: RebarItemSchema? = null
                 for (schema in RebarRegistry.ITEMS) {
