@@ -20,6 +20,7 @@ import io.papermc.paper.datacomponent.item.ItemLore
 import io.papermc.paper.datacomponent.item.ResolvableProfile
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.*
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.translation.GlobalTranslator
 import net.kyori.adventure.translation.Translator
@@ -218,12 +219,14 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
                 }
 
                 val translated = GlobalTranslator.render(it.withArguments(concatenatedArguments), locale)
-                if (translated is TranslatableComponent && translated.fallback() != null) {
+                val result = if (translated is TranslatableComponent && translated.fallback() != null) {
                     Component.text(translated.fallback()!!)
                 } else {
                     translated
                 }
 
+                // apply white color if not set
+                if (result.style().color() == null) result.color(NamedTextColor.WHITE) else result
             }
             editData(DataComponentTypes.LORE) { lore ->
                 val newLore = lore.lines().flatMap { line ->
