@@ -20,6 +20,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.display.*
 import org.bukkit.craftbukkit.inventory.CraftItemStack
 import java.util.logging.Level
+import kotlin.jvm.optionals.getOrNull
 
 
 // Much inspiration has been taken from https://github.com/GuizhanCraft/SlimefunTranslation
@@ -83,7 +84,9 @@ class PlayerPacketHandler(private val player: ServerPlayer, val handler: PlayerT
                             handleRecipeDisplay(it.contents.display),
                             it.contents.group,
                             it.contents.category,
-                            it.contents.craftingRequirements
+                            it.contents.craftingRequirements.apply {
+                                getOrNull()?.forEach { ingredient -> ingredient.itemStacks()?.forEach { item -> translate(item) } }
+                            }
                         ),
                         it.flags
                     )
