@@ -4,6 +4,7 @@ package io.github.pylonmc.rebar.i18n.packet
 
 import io.github.pylonmc.rebar.Rebar
 import io.github.pylonmc.rebar.i18n.PlayerTranslationHandler
+import io.github.pylonmc.rebar.resourcepack.armor.ArmorTextureEngine
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelPromise
@@ -125,6 +126,12 @@ class PlayerPacketHandler(private val player: ServerPlayer, val handler: PlayerT
                 )
             }
 
+            is ClientboundSetEquipmentPacket -> packet.apply {
+                slots.forEach { slot ->
+                    translate(slot.second)
+                }
+            }
+
             else -> packet
         }
 
@@ -149,10 +156,6 @@ class PlayerPacketHandler(private val player: ServerPlayer, val handler: PlayerT
                     HashedStack.create(player.containerMenu.carried, hashGenerator)
                 }
             )
-
-            is ServerboundSetCreativeModeSlotPacket -> packet.apply {
-                reset(itemStack)
-            }
 
             else -> packet
         }
@@ -226,21 +229,6 @@ class PlayerPacketHandler(private val player: ServerPlayer, val handler: PlayerT
         if (item.isEmpty) return
         try {
             handler.handleItem(CraftItemStack.asCraftMirror(item))
-        } catch (e: Throwable) {
-            // Log the error nicely instead of kicking the player off
-            // and causing two days of headache. True story.
-            Rebar.logger.log(
-                Level.SEVERE,
-                "An error occurred while handling item translations",
-                e
-            )
-        }
-    }
-
-    private fun reset(item: ItemStack) {
-        if (item.isEmpty)
-        try {
-            handler.resetItem(CraftItemStack.asCraftMirror(item))
         } catch (e: Throwable) {
             // Log the error nicely instead of kicking the player off
             // and causing two days of headache. True story.

@@ -30,6 +30,7 @@ import io.github.pylonmc.rebar.event.RebarConfigurableRecipesLoadedEvent
 import io.github.pylonmc.rebar.fluid.placement.FluidPipePlacementService
 import io.github.pylonmc.rebar.guide.pages.base.PagedGuidePage
 import io.github.pylonmc.rebar.guide.pages.base.TabbedGuidePage
+import io.github.pylonmc.rebar.i18n.CreativeActionTranslationHandler
 import io.github.pylonmc.rebar.i18n.RebarTranslator
 import io.github.pylonmc.rebar.item.RebarInventoryTicker
 import io.github.pylonmc.rebar.item.RebarItem
@@ -66,6 +67,7 @@ import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.Display
 import org.bukkit.entity.FallingBlock
 import org.bukkit.entity.ItemDisplay
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
 import org.bukkit.plugin.java.JavaPlugin
@@ -164,6 +166,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(RebarTickingEntity, this)
         pm.registerEvents(ChunkScope, this)
         pm.registerEvents(PlayerScope, this)
+        pm.registerEvents(CreativeActionTranslationHandler, this)
         ConfettiCreeperListener.register(this, pm)
 
         // Rebar Blocks
@@ -257,10 +260,6 @@ object Rebar : JavaPlugin(), RebarAddon {
 
         if (RebarConfig.WailaConfig.ENABLED) {
             pm.registerEvents(Waila, this)
-        }
-
-        if (RebarConfig.ArmorTextureConfig.ENABLED) {
-            packetEvents.eventManager.registerListener(ArmorTextureEngine, PacketListenerPriority.HIGHEST)
         }
 
         if (RebarConfig.BlockTextureConfig.ENABLED) {
