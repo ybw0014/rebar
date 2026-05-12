@@ -219,6 +219,8 @@ object Rebar : JavaPlugin(), RebarAddon {
         RebarTool.register(this, pm)
         RebarWeapon.register(this, pm)
         VanillaCookingFuel.register(this, pm)
+        RebarPickupable.register(this, pm)
+        RebarDroppable.register(this, pm)
 
         // Rebar Entities
         EntityListener.register(this, pm)
