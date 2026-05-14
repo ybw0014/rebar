@@ -7,7 +7,6 @@ import io.github.pylonmc.rebar.test.RebarTest;
 import io.github.pylonmc.rebar.test.base.GameTest;
 import io.github.pylonmc.rebar.test.entity.EntityEventError;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.UUID;
 
@@ -22,11 +21,11 @@ public class EntityEventErrorTest extends GameTest {
                     UUID entityUUID = entity.getUuid();
                     for(int i = 0; i < RebarConfig.ALLOWED_ENTITY_ERRORS + 1; i++){
                         // Yes, this is cursed, yes it works.
-                        new EntityDamageEvent(entity.getEntity(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, 1).callEvent();
+                        entity.getEntity().damage(0);
                     }
-                    RebarConfig.FULL_ERROR_STACK_TRACES = true;
                     test.succeedWhen(() -> !EntityStorage.isRebarEntity(entityUUID));
                 })
+                .cleanup(test -> RebarConfig.FULL_ERROR_STACK_TRACES = true)
                 .build());
     }
 }
