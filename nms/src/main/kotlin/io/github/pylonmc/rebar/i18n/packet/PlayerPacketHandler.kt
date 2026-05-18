@@ -17,6 +17,7 @@ import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.HashOps
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.crafting.display.*
 import org.bukkit.craftbukkit.inventory.CraftItemStack
 import java.util.logging.Level
@@ -145,7 +146,7 @@ class PlayerPacketHandler(private val player: ServerPlayer, val handler: PlayerT
                 packet.stateId,
                 packet.slotNum,
                 packet.buttonNum,
-                packet.clickType,
+                packet.containerInput,
                 packet.changedSlots,
                 if (packet.changedSlots.size == 1) {
                     val slot = packet.changedSlots.keys.single()
@@ -210,7 +211,7 @@ class PlayerPacketHandler(private val player: ServerPlayer, val handler: PlayerT
 
             is SlotDisplay.Composite -> SlotDisplay.Composite(display.contents.map(::handleSlotDisplay))
             is SlotDisplay.ItemStackSlotDisplay -> SlotDisplay.ItemStackSlotDisplay(
-                display.stack.copy().apply(::translate)
+                ItemStackTemplate.fromNonEmptyStack(display.stack.create().apply(::translate))
             )
 
             is SlotDisplay.SmithingTrimDemoSlotDisplay -> SlotDisplay.SmithingTrimDemoSlotDisplay(
