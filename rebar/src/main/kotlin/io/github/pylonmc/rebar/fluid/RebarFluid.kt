@@ -64,13 +64,9 @@ open class RebarFluid(
         if (key !in nameWarningsSuppressed) {
             val addon = RebarRegistry.ADDONS[NamespacedKey(key.namespace, key.namespace)]!!
             for (locale in addon.languages) {
-                val colorTranslationKey = "${key.namespace}.fluid.color.${key.key}"
-                if (!addon.translator.canTranslate(colorTranslationKey, locale)) {
-                    Rebar.logger.warning("${key.namespace} is missing a color translation key for fluid ${key.key} (locale: ${locale.displayName} | expected translation key: $colorTranslationKey)")
-                }
-                val nameWithoutColorTranslationKey = "${key.namespace}.fluid.name_without_color.${key.key}"
-                if (!addon.translator.canTranslate(nameWithoutColorTranslationKey, locale)) {
-                    Rebar.logger.warning("${key.namespace} is missing a name_without_color translation key for fluid ${key.key} (locale: ${locale.displayName} | expected translation key: $nameWithoutColorTranslationKey)")
+                val translationKey = "${key.namespace}.fluid.${key.key}"
+                if (!addon.translator.canTranslate(translationKey, locale)) {
+                    Rebar.logger.warning("${key.namespace} is missing a translation key for fluid ${key.key} (locale: ${locale.displayName} | expected translation key: $translationKey)")
                 }
             }
         }
