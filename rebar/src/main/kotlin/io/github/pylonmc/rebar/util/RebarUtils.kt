@@ -9,9 +9,9 @@ import io.github.pylonmc.rebar.config.Config
 import io.github.pylonmc.rebar.config.ConfigSection
 import io.github.pylonmc.rebar.config.ContributorConfig
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter
-import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.i18n.customMiniMessage
+import io.github.pylonmc.rebar.item.ItemTypeWrapper
 import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.position.BlockPosition
@@ -308,16 +308,15 @@ fun Class<*>.isSubclassOf(other: Class<*>): Boolean = other.isAssignableFrom(thi
 fun fromMiniMessage(string: String): Component = customMiniMessage.deserialize(string)
 
 /**
- * Finds a Rebar item in an inventory. Use this to find Rebar items instead of traditional
+ * Finds a Rebar item in this inventory. Use this to find Rebar items instead of traditional
  * find methods, because this will compare Rebar IDs.
  *
- * @param inventory The inventory to search
  * @param targetItem The item to find. Items will be compared by their Rebar ID
  * @return The slot containing the item, or null if no item was found
  */
-fun findRebarItemInInventory(inventory: Inventory, targetItem: RebarItemSchema): Int? {
-    for (i in 0..<inventory.size) {
-        val item = inventory.getItem(i)?.let {
+fun Inventory.findRebar(targetItem: RebarItemSchema): Int? {
+    for (i in 0..<size) {
+        val item = getItem(i)?.let {
             RebarItemSchema.fromStack(it)
         }
         if (item == targetItem) {
@@ -325,6 +324,31 @@ fun findRebarItemInInventory(inventory: Inventory, targetItem: RebarItemSchema):
         }
     }
     return null
+}
+
+/**
+ * Finds an item of the right type in this inventory. Use this to find items purely based on Vanilla / Rebar IDs.
+ *
+ * @param targetType The type to find. Items will be compared by their Vanilla / Rebar ID
+ * @return The slot containing the item, or null if no item was found
+ */
+fun Inventory.findType(targetType: ItemTypeWrapper): Int? {
+    for (i in 0..<size) {
+        val item = getItem(i)?.let {
+            ItemTypeWrapper(it)
+        }
+        if (item == targetType) {
+            return i
+        }
+    }
+    return null
+}
+
+fun Inventory.swapItem(from: Int, to: Int) {
+    val fromItem = getItem(from)
+    val toItem = getItem(to)
+    setItem(from, toItem)
+    setItem(to, fromItem)
 }
 
 @JvmSynthetic

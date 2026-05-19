@@ -48,8 +48,8 @@ interface RebarSimpleMultiblock : RebarMultiblock, RebarGhostBlockHolder, RebarE
      * Represents a single block of a multiblock.
      */
     open class MultiblockComponent protected constructor(
-        val vanillaBlocks: List<BlockData>,
-        val rebarBlocks: List<NamespacedKey>,
+        open val vanillaBlocks: List<BlockData>,
+        open val rebarBlocks: List<NamespacedKey>,
     ) {
 
         init {
@@ -97,7 +97,7 @@ interface RebarSimpleMultiblock : RebarMultiblock, RebarGhostBlockHolder, RebarE
          *
          * @see RebarGhostBlockHolder
          */
-        fun spawnGhostBlock(multiblock: RebarSimpleMultiblock, rotatedPosition: Vector3i) {
+        fun spawnGhostBlock(multiblock: RebarGhostBlockHolder, rotatedPosition: Vector3i) {
             multiblock.addGhostBlock(rotatedPosition, vanillaBlocks, rebarBlocks)
             updateGhostBlock(multiblock, rotatedPosition)
         }
@@ -105,7 +105,7 @@ interface RebarSimpleMultiblock : RebarMultiblock, RebarGhostBlockHolder, RebarE
         /**
          * Updates the corresponding ghost block's visuals
          */
-        fun updateGhostBlock(multiblock: RebarSimpleMultiblock, rotatedPosition: Vector3i) {
+        fun updateGhostBlock(multiblock: RebarGhostBlockHolder, rotatedPosition: Vector3i) {
             val block = multiblock.block.getRelative(rotatedPosition)
             val color = if (matches(block)) {
                 Color.LIME
@@ -115,7 +115,9 @@ interface RebarSimpleMultiblock : RebarMultiblock, RebarGhostBlockHolder, RebarE
                 Color.RED
             }
             multiblock.getVanillaGhostBlockDisplay(rotatedPosition)?.entity?.glowColorOverride = color
+            multiblock.getVanillaGhostBlockHitbox(rotatedPosition)?.apply { if (color == Color.LIME) hide() else show() }
             multiblock.getRebarGhostBlockDisplay(rotatedPosition)?.entity?.glowColorOverride = color
+            multiblock.getRebarGhostBlockHitbox(rotatedPosition)?.apply { if (color == Color.LIME) hide() else show() }
         }
 
         companion object {
