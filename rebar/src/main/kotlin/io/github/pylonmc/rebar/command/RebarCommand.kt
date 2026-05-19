@@ -11,7 +11,6 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.pylonmc.rebar.Rebar
 import io.github.pylonmc.rebar.addon.RebarAddon
 import io.github.pylonmc.rebar.block.BlockStorage
-import io.github.pylonmc.rebar.block.RebarBlockSchema
 import io.github.pylonmc.rebar.block.base.RebarSimpleMultiblock
 import io.github.pylonmc.rebar.block.context.BlockCreateContext
 import io.github.pylonmc.rebar.content.debug.DebugWaxedWeatheredCutCopperStairs
@@ -61,7 +60,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import kotlin.math.min
 import org.bukkit.util.Vector
 import kotlin.collections.forEach
@@ -606,7 +604,7 @@ private val setphantom = buildCommand("setphantom") {
     }
 }
 
-private val finishMultiblock = buildCommand("fillmultiblock") {
+private val fillMultiblock = buildCommand("fillmultiblock") {
     permission("rebar.command.fillmultiblock")
     executesWithPlayer { player ->
         RebarMetrics.onCommandRun("/rb fillmultiblock")
@@ -722,7 +720,7 @@ internal val ROOT_COMMAND = buildCommand("rebar") {
     then(research)
     then(exposeRecipeConfig)
     then(confetti)
-    then(finishMultiblock)
+    then(fillMultiblock)
     then(forceload)
     then(versions)
 }
