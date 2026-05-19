@@ -181,9 +181,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      */
     fun refreshBlockTextureItem() {
         blockTextureEntity?.let {
-            val item = getBlockTextureItem() ?: ItemStack(Material.BARRIER)
-            item.setData(DataComponentTypes.ITEM_MODEL, Key.key("air"))
-            it.itemStack = item
+            it.itemStack = getBlockTextureItem() ?: ItemStack(Material.BARRIER)
         }
     }
 
@@ -228,6 +226,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
         for ((property, value) in properties) {
             addCustomModelDataString("$property=$value")
         }
+        set(DataComponentTypes.ITEM_MODEL, Key.key("air"))
     }?.build()
 
     /**

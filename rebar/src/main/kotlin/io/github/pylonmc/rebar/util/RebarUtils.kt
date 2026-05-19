@@ -38,6 +38,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataContainer
 import org.bukkit.persistence.PersistentDataHolder
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.util.BoundingBox
 import org.bukkit.util.Vector
 import org.joml.Matrix3f
 import org.joml.RoundingMode
@@ -494,6 +495,13 @@ fun ItemStack.vanillaDisplayName(): Component
 
 val Component.plainText: String
     get() = PlainTextComponentSerializer.plainText().serialize(this)
+
+fun blocksWithin(world: World, boundingBox: BoundingBox) = blocksBetween(
+    BlockPosition(world, boundingBox.min),
+    BlockPosition(world, boundingBox.max)
+)
+
+fun blocksBetween(from: BlockPosition, to: BlockPosition): List<Block> = NmsAccessor.instance.blocksBetween(from, to)
 
 /**
  * Does not include first or last block

@@ -1,6 +1,7 @@
 package io.github.pylonmc.rebar.nms
 
 import com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent
+import io.github.pylonmc.rebar.Rebar
 import io.github.pylonmc.rebar.async.PlayerScope
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
@@ -8,10 +9,12 @@ import io.github.pylonmc.rebar.i18n.PlayerTranslationHandler
 import io.github.pylonmc.rebar.i18n.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.nms.entity.BlockTextureEntityImpl
 import io.github.pylonmc.rebar.nms.recipe.HandlerRecipeBookClick
+import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.papermc.paper.adventure.PaperAdventure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
+import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.TextComponentTagVisitor
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
@@ -45,6 +48,8 @@ import org.bukkit.persistence.PersistentDataContainer
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.math.max
+import kotlin.math.min
 import com.mojang.datafixers.util.Pair as NmsPair
 import net.minecraft.world.entity.EquipmentSlot as NmsEquipmentSlot
 
@@ -181,4 +186,17 @@ object NmsAccessorImpl : NmsAccessor {
     }
 
     override fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity = BlockTextureEntityImpl(block)
+
+    override fun isOccluding(block: Block) = (block as CraftBlock).blockState.canOcclude()
+
+    override fun blocksBetween(from: BlockPosition, to: BlockPosition) = BlockPos.betweenClosedStream(
+        min(from.x, to.x), min(from.y, to.y), min(from.z, to.z),
+        max(from.x, to.x), max(from.y, to.y), max(from.z, to.z)
+    ).let {
+        val blocks = mutableListOf<Block>()
+        for (pos in it) {
+            blocks.add(from.world?.getBlockAt(pos.x, pos.y, pos.z) ?: continue)
+        }
+        blocks
+    }
 }

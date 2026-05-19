@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
 import io.github.pylonmc.rebar.i18n.PlayerTranslationHandler
+import io.github.pylonmc.rebar.util.position.BlockPosition
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.World
@@ -51,6 +52,10 @@ interface NmsAccessor {
     fun hasTracker(entity: Entity): Boolean
 
     fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity
+
+    fun isOccluding(block: Block): Boolean
+
+    fun blocksBetween(from: BlockPosition, to: BlockPosition): List<Block>
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")
