@@ -4,7 +4,7 @@ on:
     branches: [ "master" ]
     paths:
       - "**/src/**"
-      - "*.gradle.kts"
+      - "**/*.gradle.kts"
   workflow_dispatch:
 
 permissions:
