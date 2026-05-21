@@ -94,7 +94,7 @@ message:
         set: "Set %player%'s research points to %points%"
         added: "Added %points% research points to %player%"
         removed: "Removed %points% research points from %player%"
-        query: "%player% has %points% research points"
+        get: "%player% has %points% research points"
     exposerecipe:
       not-configurable: "<red>This recipe type is not configurable"
       warning: "<yellow>Warning: exposing recipe configs will keep them from updating automatically. Delete %file% to revert"
