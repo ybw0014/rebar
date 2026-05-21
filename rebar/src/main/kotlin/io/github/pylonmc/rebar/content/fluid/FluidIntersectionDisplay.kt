@@ -16,13 +16,11 @@ import io.github.pylonmc.rebar.util.IMMEDIATE_FACES
 import io.github.pylonmc.rebar.util.rebarKey
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
-import jdk.internal.org.jline.keymap.KeyMap.display
-import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.EventPriority
 import org.bukkit.persistence.PersistentDataContainer
-import java.util.UUID
+import java.util.*
 
 /**
  * A 'intersection display' is one of the gray displays that indicates one or more pipes being joined together.
@@ -131,6 +129,7 @@ class FluidIntersectionDisplay : RebarEntity<ItemDisplay>, RebarDeathEntity, Flu
                 .itemStack(ItemStackBuilder.of(FluidPointType.INTERSECTION.material)
                     .addCustomModelDataString("fluid_point_intersection:none")
                 )
+                .itemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED)
                 .build(block.location.toCenterLocation())
         }
     }
