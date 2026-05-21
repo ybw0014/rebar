@@ -4,16 +4,19 @@ import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.item.base.*
 import io.github.pylonmc.rebar.item.research.Research.Companion.canCraft
+import io.github.pylonmc.rebar.nms.NmsAccessor
+import io.github.pylonmc.rebar.recipe.RecipeType.Companion.vanillaCraftingRecipes
 import io.github.pylonmc.rebar.recipe.vanilla.CookingRecipeWrapper
-import io.github.pylonmc.rebar.recipe.vanilla.ShapedRecipeType
 import io.github.pylonmc.rebar.recipe.vanilla.VanillaRecipeType
 import io.github.pylonmc.rebar.util.isRebarAndIsNot
 import io.github.pylonmc.rebar.util.plainText
+import io.github.pylonmc.rebar.util.rebarKey
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.event.player.CartographyItemEvent
 import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
 import org.bukkit.Keyed
+import org.bukkit.block.Block
 import org.bukkit.block.Crafter
 import org.bukkit.block.Furnace
 import org.bukkit.entity.Player
@@ -23,14 +26,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockCookEvent
 import org.bukkit.event.block.CrafterCraftEvent
 import org.bukkit.event.inventory.*
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
-import org.bukkit.inventory.ShapelessRecipe
-import org.bukkit.inventory.StonecutterInventory
+import org.bukkit.inventory.*
 import kotlin.math.max
 import kotlin.math.min
 
 internal object RebarRecipeListener : Listener {
+
+    private val crafterResultCorrector = rebarKey("crafter_result_corrector")
 
     @Suppress("UnstableApiUsage")
     @EventHandler(priority = EventPriority.LOWEST)
@@ -117,63 +119,100 @@ internal object RebarRecipeListener : Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    private fun onCrafterCraft(e: CrafterCraftEvent) {
-        val crafterState = e.block.state as? Crafter ?: return
-        val inventory = crafterState.inventory
+    private fun getCorrectedCrafterRecipe(originalRecipe: Recipe?, block: Block): Recipe? {
+        if (originalRecipe is Keyed && originalRecipe.key !in VanillaRecipeType.nonRebarRecipes) {
+            // Already a rebar recipe, so it should be valid
+            return originalRecipe
+        }
+
+        val crafter = block.getState(false) as? Crafter ?: return null
+        val inventory = crafter.inventory
 
         val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingItem>() }
         if (!hasRebarItems) {
-            return
+            return originalRecipe
         }
 
-        val crafter = e.block.state as Crafter
-
         // TODO make this not horrible (both for performance and readability) - see https://github.com/pylonmc/rebar/issues/545
-        for (recipe in ShapedRecipeType.recipes) {
+        for (recipe in vanillaCraftingRecipes()) {
             val craftingRecipe = recipe.craftingRecipe
+            if (craftingRecipe.key in VanillaRecipeType.nonRebarRecipes) {
+                continue
+            }
+
             if (craftingRecipe is ShapedRecipe) {
                 var i = 0
                 var isValid = true
                 recipeLoop@ for (row in craftingRecipe.shape) {
-                    for (index in row) {
+                    ingredientLoop@ for (index in row) {
                         val ingredient = craftingRecipe.choiceMap[index]
-                        if (ingredient != null) {
-                            val actual = crafter.inventory.getItem(i)
-                            if (actual == null || !ingredient.test(actual)) {
-                                isValid = false
-                                break@recipeLoop
-                            }
+                        val actual = inventory.getItem(i++)
+                        if (ingredient == null && (actual == null || actual.isEmpty)) {
+                            continue@ingredientLoop
                         }
-                        i++
+
+                        if (ingredient == null || actual == null || !ingredient.test(actual)) {
+                            isValid = false
+                            break@recipeLoop
+                        }
                     }
                 }
                 if (isValid) {
-                    e.result = craftingRecipe.result
-                    return
+                    return craftingRecipe
                 }
-
             } else if (craftingRecipe is ShapelessRecipe) {
-                val usedSlots = mutableSetOf<Int>()
-                for (ingredient in craftingRecipe.choiceList) {
-                    var isValid = false
-                    for (crafterIndex in 0..<crafter.inventory.size) {
-                        val actual = crafter.inventory.getItem(crafterIndex)
-                        if (crafterIndex in usedSlots || actual == null || !ingredient.test(actual)) {
+                val slots = crafter.inventory.contents.filterNotNull().toMutableList()
+                var isValid = true
+                ingredientLoop@ for (ingredient in craftingRecipe.choiceList) {
+                    var found = false
+                    recipeLoop@ for (crafterIndex in slots.indices) {
+                        val actual = slots[crafterIndex]
+                        if (!ingredient.test(actual)) {
                             continue
                         }
-                        isValid = true
-                        usedSlots.add(crafterIndex)
+                        found = true
+                        slots.removeAt(crafterIndex)
+                        break@recipeLoop
                     }
-                    if (isValid) {
-                        e.result = craftingRecipe.result
-                        return
+
+                    if (!found) {
+                        isValid = false
+                        break@ingredientLoop
                     }
                 }
-
-            } else {
-                e.isCancelled = true
+                if (isValid && slots.isEmpty()) {
+                    return craftingRecipe
+                }
             }
+        }
+        return null
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private fun onOpenCrafter(e: InventoryOpenEvent) {
+        val updater: (inventoryView: InventoryView, slot: Int, oldItemStack: ItemStack?, newItemStack: ItemStack?) -> Unit =
+            updater@ { inventoryView, _, _, _ ->
+                val crafterInventory = inventoryView.topInventory as? CrafterInventory ?: return@updater
+                val block = crafterInventory.location?.block ?: return@updater
+                // We do not have the original recipe so instead we pass a dummy recipe and check if
+                // that is what is returned, if so, whatever the result already is, is valid
+                // otherwise it should be corrected to the found recipe's result, or null
+                val correctedRecipe = getCorrectedCrafterRecipe(DummyRecipe, block)
+                if (correctedRecipe === DummyRecipe) return@updater
+                crafterInventory.setItem(9, correctedRecipe?.result)
+            }
+        updater(e.view, 0, null, null)
+        NmsAccessor.instance.addSlotChangedListener(crafterResultCorrector, e.view, updater)
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private fun onCrafterCraft(e: CrafterCraftEvent) {
+        val correctedRecipe = getCorrectedCrafterRecipe(e.recipe, e.block)
+        if (correctedRecipe != null && correctedRecipe !== e.recipe) {
+            e.result = correctedRecipe.result
+        } else if (correctedRecipe == null) {
+            e.isCancelled = true
+            e.result = ItemStack.empty()
         }
     }
 
@@ -381,5 +420,11 @@ internal object RebarRecipeListener : Listener {
                 && hasData(DataComponentTypes.MAX_DAMAGE)
                 && hasData(DataComponentTypes.DAMAGE)
                 && getData(DataComponentTypes.DAMAGE)!! > 0
+    }
+
+    internal object DummyRecipe : Recipe {
+        override fun getResult(): ItemStack {
+            return ItemStack.empty()
+        }
     }
 }
