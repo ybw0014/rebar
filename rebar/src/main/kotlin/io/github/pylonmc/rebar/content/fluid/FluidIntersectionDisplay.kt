@@ -125,7 +125,6 @@ class FluidIntersectionDisplay : RebarEntity<ItemDisplay>, RebarDeathEntity, Flu
         @JvmSynthetic
         internal fun makeEntity(block: Block): ItemDisplay {
             return ItemDisplayBuilder()
-                .brightness(7)
                 .transformation(TransformBuilder()
                     .scale(FluidEndpointDisplay.POINT_SIZE)
                 )
