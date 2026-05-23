@@ -290,11 +290,12 @@ internal object BlockListener : MultiListener {
     // We need to remember if the event was going to drop originally or not
     private var destroyWillDrop: Boolean? = null
 
-    @MultiHandler(priorities = [ EventPriority.LOWEST, EventPriority.MONITOR ], ignoreCancelled = true)
+    @MultiHandler(priorities = [ EventPriority.LOWEST, EventPriority.MONITOR ])
     private fun blockRemove(event: BlockDestroyEvent, priority: EventPriority) {
         val block = BlockStorage.get(event.block) ?: return
         val context = BlockBreakContext.Destroyed(event, destroyWillDrop ?: event.willDrop())
         if (priority == EventPriority.LOWEST) {
+            if (event.isCancelled) return
             if (!BlockStorage.preBreakBlock(block, context)) {
                 event.isCancelled = true
                 return
@@ -304,7 +305,9 @@ internal object BlockListener : MultiListener {
             event.setWillDrop(false)
         } else {
             this.destroyWillDrop = null
-            BlockStorage.removeBlock(block, event.block.position, context)
+            if (!event.isCancelled) {
+                BlockStorage.removeBlock(block, event.block.position, context)
+            }
         }
     }
 
