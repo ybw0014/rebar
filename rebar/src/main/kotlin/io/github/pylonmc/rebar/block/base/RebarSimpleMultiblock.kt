@@ -115,9 +115,8 @@ interface RebarSimpleMultiblock : RebarMultiblock, RebarGhostBlockHolder, RebarE
                 Color.RED
             }
             multiblock.getVanillaGhostBlockDisplay(rotatedPosition)?.entity?.glowColorOverride = color
-            multiblock.getVanillaGhostBlockHitbox(rotatedPosition)?.apply { if (color == Color.LIME) hide() else show() }
             multiblock.getRebarGhostBlockDisplay(rotatedPosition)?.entity?.glowColorOverride = color
-            multiblock.getRebarGhostBlockHitbox(rotatedPosition)?.apply { if (color == Color.LIME) hide() else show() }
+            multiblock.getGhostBlockHitbox(rotatedPosition)?.apply { if (color == Color.LIME) hide() else show() }
         }
 
         companion object {

@@ -16,8 +16,10 @@ import io.github.pylonmc.rebar.item.ItemTypeWrapper
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.findType
 import io.github.pylonmc.rebar.util.rebarKey
+import io.github.pylonmc.rebar.util.setNullable
 import io.github.pylonmc.rebar.util.swapItem
 import io.github.pylonmc.rebar.waila.WailaDisplay
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes.entity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import net.kyori.adventure.text.Component
@@ -57,33 +59,39 @@ import java.util.*
 interface RebarGhostBlockHolder : RebarEntityHolderBlock {
 
     class GhostBlockHitbox : RebarEntity<Interaction>, RebarInteractEntity {
-        val ghostBlockId: UUID
+        val rebarGhostBlockId: UUID?
+        val vanillaGhostBlockId: UUID?
+        var activeGhostBlockId: UUID? = null
 
         var originalSize: Float = 0.5F
 
         var lastInteract: Long = 0
 
         constructor(entity: Interaction) : super(entity) {
-            this.ghostBlockId = entity.persistentDataContainer.get(GHOST_BLOCK_ID_KEY, RebarSerializers.UUID)!!
+            this.rebarGhostBlockId = entity.persistentDataContainer.get(REBAR_GHOST_BLOCK_ID_KEY, RebarSerializers.UUID)
+            this.vanillaGhostBlockId = entity.persistentDataContainer.get(VANILLA_GHOST_BLOCK_ID_KEY, RebarSerializers.UUID)
         }
 
-        constructor(ghostBlock: GhostBlock<*>) : super(KEY, InteractionBuilder().size(0.5F).build(ghostBlock.entity.location)) {
-            this.ghostBlockId = ghostBlock.uuid
+        constructor(rebarGhostBlock: RebarGhostBlock?, vanillaGhostBlock: VanillaGhostBlock?) : super(KEY,
+            InteractionBuilder().size(0.5F).build(rebarGhostBlock?.entity?.location ?: vanillaGhostBlock?.entity?.location ?: throw IllegalArgumentException("Either rebarGhostBlock or vanillaGhostBlock must be non-null"))) {
+            this.rebarGhostBlockId = rebarGhostBlock?.uuid
+            this.vanillaGhostBlockId = vanillaGhostBlock?.uuid
         }
 
         override fun write(pdc: PersistentDataContainer) {
-            pdc.set(GHOST_BLOCK_ID_KEY, RebarSerializers.UUID, ghostBlockId)
+            pdc.setNullable(REBAR_GHOST_BLOCK_ID_KEY, RebarSerializers.UUID, rebarGhostBlockId)
+            pdc.setNullable(VANILLA_GHOST_BLOCK_ID_KEY, RebarSerializers.UUID, vanillaGhostBlockId)
         }
 
         @MultiHandler(priorities = [ EventPriority.MONITOR ], ignoreCancelled = true)
         override fun onInteract(event: PlayerInteractEntityEvent, priority: EventPriority) {
-            if (System.currentTimeMillis() - lastInteract < 1000) {
+            if (System.currentTimeMillis() - lastInteract < 1000 || activeGhostBlockId == null) {
                 return
             }
 
             val player = event.player
             val inventory = player.inventory
-            val pickStack = EntityStorage.getAs(GhostBlock::class.java, ghostBlockId)?.getPickItem() ?: return
+            val pickStack = EntityStorage.getAs(GhostBlock::class.java, activeGhostBlockId!!)?.getPickItem() ?: return
             val pickType = ItemTypeWrapper(pickStack)
 
             var foundIndex = inventory.findType(pickType)
@@ -106,7 +114,7 @@ interface RebarGhostBlockHolder : RebarEntityHolderBlock {
         }
 
         override fun getWaila(player: Player): WailaDisplay? {
-            return EntityStorage.getAs(GhostBlock::class.java, ghostBlockId)?.getWaila(player)
+            return rebarGhostBlockId?.let { EntityStorage.getAs(GhostBlock::class.java, it)?.getWaila(player) }
         }
 
         fun hide() {
@@ -121,14 +129,18 @@ interface RebarGhostBlockHolder : RebarEntityHolderBlock {
             entity.interactionHeight = originalSize
         }
 
-        fun setSize(size: Double) {
-            entity.interactionWidth = size.toFloat()
-            entity.interactionHeight = size.toFloat()
+        fun rebarHitbox() {
+            activeGhostBlockId = rebarGhostBlockId
+        }
+
+        fun vanillaHitbox() {
+            activeGhostBlockId = vanillaGhostBlockId
         }
 
         companion object {
             val KEY = rebarKey("rebar_ghost_block_hitbox")
-            val GHOST_BLOCK_ID_KEY = rebarKey("ghost_block_id")
+            val REBAR_GHOST_BLOCK_ID_KEY = rebarKey("rebar_ghost_block_id")
+            val VANILLA_GHOST_BLOCK_ID_KEY = rebarKey("vanilla_ghost_block_id")
         }
     }
 
@@ -250,66 +262,61 @@ interface RebarGhostBlockHolder : RebarEntityHolderBlock {
     fun addGhostBlock(position: Vector3i, vanillaBlocks: List<BlockData>, rebarBlocks: List<NamespacedKey>) {
         check(!hasGhostBlockAt(position)) { "There is already a ghost block at $position" }
 
+        var vanillaGhostBlock: VanillaGhostBlock? = null
         if (!vanillaBlocks.isEmpty()) {
-            val entity = VanillaGhostBlock(block, position, vanillaBlocks.toMutableList())
-            val hitbox = GhostBlockHitbox(entity)
-            EntityStorage.add(entity)
-            EntityStorage.add(hitbox)
-            addEntity(getVanillaGhostBlockName(position, false), entity)
-            addEntity(getVanillaGhostBlockName(position, true), hitbox)
+            vanillaGhostBlock = VanillaGhostBlock(block, position, vanillaBlocks.toMutableList())
+            EntityStorage.add(vanillaGhostBlock)
+            addEntity(getVanillaGhostBlockName(position), vanillaGhostBlock)
         }
 
+        var rebarGhostBlock: RebarGhostBlock? = null
         if (!rebarBlocks.isEmpty()) {
-            val entity = RebarGhostBlock(block, position, rebarBlocks.toMutableList())
-            val hitbox = GhostBlockHitbox(entity)
-            EntityStorage.add(entity)
-            EntityStorage.add(hitbox)
-            addEntity(getRebarGhostBlockName(position, false), entity)
-            addEntity(getRebarGhostBlockName(position, true), hitbox)
+            rebarGhostBlock = RebarGhostBlock(block, position, rebarBlocks.toMutableList())
+            EntityStorage.add(rebarGhostBlock)
+            addEntity(getRebarGhostBlockName(position), rebarGhostBlock)
         }
+
+        val hitbox = GhostBlockHitbox(rebarGhostBlock, vanillaGhostBlock)
+        EntityStorage.add(hitbox)
+        addEntity(getGhostBlockHitboxName(position), hitbox)
 
         startCycleTask(position)
     }
 
     fun removeGhostBlock(position: Vector3i) {
-        getHeldEntity(getVanillaGhostBlockName(position, false))?.remove()
-        getHeldEntity(getVanillaGhostBlockName(position, true))?.remove()
-        getHeldEntity(getRebarGhostBlockName(position, false))?.remove()
-        getHeldEntity(getRebarGhostBlockName(position, true))?.remove()
+        getHeldEntity(getVanillaGhostBlockName(position))?.remove()
+        getHeldEntity(getRebarGhostBlockName(position))?.remove()
+        getHeldEntity(getGhostBlockHitboxName(position))?.remove()
     }
 
     fun hasGhostBlockAt(position: Vector3i)
             = getVanillaGhostBlockDisplay(position) != null || getRebarGhostBlockDisplay(position) != null
 
     fun getVanillaGhostBlockDisplay(position: Vector3i)
-            = getHeldRebarEntity(VanillaGhostBlock::class.java, getVanillaGhostBlockName(position, false))
-
-    fun getVanillaGhostBlockHitbox(position: Vector3i)
-            = getHeldRebarEntity(GhostBlockHitbox::class.java, getVanillaGhostBlockName(position, true))
+            = getHeldRebarEntity(VanillaGhostBlock::class.java, getVanillaGhostBlockName(position))
 
     fun getRebarGhostBlockDisplay(position: Vector3i)
-            = getHeldRebarEntity(RebarGhostBlock::class.java, getRebarGhostBlockName(position, false))
+            = getHeldRebarEntity(RebarGhostBlock::class.java, getRebarGhostBlockName(position))
 
-    fun getRebarGhostBlockHitbox(position: Vector3i)
-            = getHeldRebarEntity(GhostBlockHitbox::class.java, getRebarGhostBlockName(position, true))
+    fun getGhostBlockHitbox(position: Vector3i)
+            = getHeldRebarEntity(GhostBlockHitbox::class.java, getGhostBlockHitboxName(position))
 
     private fun startCycleTask(position: Vector3i) {
         val vanillaGhostBlock = getVanillaGhostBlockDisplay(position)
-        val vanillaHitbox = getVanillaGhostBlockHitbox(position)
         val rebarGhostBlock = getRebarGhostBlockDisplay(position)
-        val rebarHitbox = getRebarGhostBlockHitbox(position)
+        val ghostBlockHitbox = getGhostBlockHitbox(position)
         check(vanillaGhostBlock != null || rebarGhostBlock != null)
 
         val updateTasks = mutableListOf<Runnable>()
         if (vanillaGhostBlock != null) {
-            for (i in 0..<vanillaGhostBlock.vanillaBlocks.size) {
+            ghostBlockHitbox?.vanillaHitbox()
+            for (i in vanillaGhostBlock.vanillaBlocks.indices) {
                 if (i == 0 && rebarGhostBlock != null) {
                     updateTasks.add {
                         rebarGhostBlock.setSize(0.499)
-                        rebarHitbox?.setSize(0.499)
                         vanillaGhostBlock.setSize(0.501)
-                        vanillaHitbox?.setSize(0.501)
                         vanillaGhostBlock.setIndex(i)
+                        ghostBlockHitbox?.vanillaHitbox()
                     }
                 } else {
                     updateTasks.add {
@@ -319,14 +326,17 @@ interface RebarGhostBlockHolder : RebarEntityHolderBlock {
             }
         }
         if (rebarGhostBlock != null) {
-            for (i in 0..<rebarGhostBlock.rebarBlocks.size) {
+            if (vanillaGhostBlock == null) {
+                ghostBlockHitbox?.rebarHitbox()
+            }
+
+            for (i in rebarGhostBlock.rebarBlocks.indices) {
                 if (i == 0 && vanillaGhostBlock != null) {
                     updateTasks.add {
                         vanillaGhostBlock.setSize(0.499)
-                        vanillaHitbox?.setSize(0.499)
                         rebarGhostBlock.setSize(0.501)
-                        rebarHitbox?.setSize(0.501)
                         rebarGhostBlock.setIndex(i)
+                        ghostBlockHitbox?.rebarHitbox()
                     }
                 } else {
                     updateTasks.add {
@@ -372,8 +382,8 @@ interface RebarGhostBlockHolder : RebarEntityHolderBlock {
                 if (entity !is GhostBlock) {
                     continue
                 }
-                val vanilla = block.getHeldRebarEntity(VanillaGhostBlock::class.java, getVanillaGhostBlockName(entity.position, false))
-                val rebar = block.getHeldRebarEntity(RebarGhostBlock::class.java, getRebarGhostBlockName(entity.position, false))
+                val vanilla = block.getHeldRebarEntity(VanillaGhostBlock::class.java, getVanillaGhostBlockName(entity.position))
+                val rebar = block.getHeldRebarEntity(RebarGhostBlock::class.java, getRebarGhostBlockName(entity.position))
                 if (vanilla != null && rebar != null) {
                     if (entity is VanillaGhostBlock) { // avoid starting duplicate tasks
                         block.startCycleTask(entity.position)
@@ -384,8 +394,10 @@ interface RebarGhostBlockHolder : RebarEntityHolderBlock {
             }
         }
 
-        private fun getVanillaGhostBlockName(position: Vector3i, hitbox: Boolean) = "vanilla_ghost_block_${position.x}_${position.y}_${position.z}${if (hitbox) "_hitbox" else ""}"
+        private fun getVanillaGhostBlockName(position: Vector3i) = "vanilla_ghost_block_${position.x}_${position.y}_${position.z}}"
 
-        private fun getRebarGhostBlockName(position: Vector3i, hitbox: Boolean) = "rebar_ghost_block_${position.x}_${position.y}_${position.z}${if (hitbox) "_hitbox" else ""}"
+        private fun getRebarGhostBlockName(position: Vector3i) = "rebar_ghost_block_${position.x}_${position.y}_${position.z}}"
+
+        private fun getGhostBlockHitboxName(position: Vector3i) = "ghost_block_hitbox_${position.x}_${position.y}_${position.z}}"
     }
 }
