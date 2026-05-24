@@ -143,7 +143,7 @@ internal object RebarRecipeListener : Listener {
             if (craftingRecipe is ShapedRecipe) {
                 var i = 0
                 var isValid = true
-                recipeLoop@ for (row in craftingRecipe.shape) {
+                rowLoop@ for (row in craftingRecipe.shape) {
                     ingredientLoop@ for (index in row) {
                         val ingredient = craftingRecipe.choiceMap[index]
                         val actual = inventory.getItem(i++)
@@ -153,7 +153,7 @@ internal object RebarRecipeListener : Listener {
 
                         if (ingredient == null || actual == null || !ingredient.test(actual)) {
                             isValid = false
-                            break@recipeLoop
+                            break@rowLoop
                         }
                     }
                 }
@@ -165,14 +165,14 @@ internal object RebarRecipeListener : Listener {
                 var isValid = true
                 ingredientLoop@ for (ingredient in craftingRecipe.choiceList) {
                     var found = false
-                    recipeLoop@ for (crafterIndex in slots.indices) {
+                    slotLoop@ for (crafterIndex in slots.indices) {
                         val actual = slots[crafterIndex]
                         if (!ingredient.test(actual)) {
                             continue
                         }
                         found = true
                         slots.removeAt(crafterIndex)
-                        break@recipeLoop
+                        break@slotLoop
                     }
 
                     if (!found) {
@@ -190,19 +190,18 @@ internal object RebarRecipeListener : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onOpenCrafter(e: InventoryOpenEvent) {
-        val updater: (inventoryView: InventoryView, slot: Int, oldItemStack: ItemStack?, newItemStack: ItemStack?) -> Unit =
-            updater@ { inventoryView, _, _, _ ->
-                val crafterInventory = inventoryView.topInventory as? CrafterInventory ?: return@updater
-                val block = crafterInventory.location?.block ?: return@updater
-                // We do not have the original recipe so instead we pass a dummy recipe and check if
-                // that is what is returned, if so, whatever the result already is, is valid
-                // otherwise it should be corrected to the found recipe's result, or null
-                val correctedRecipe = getCorrectedCrafterRecipe(DummyRecipe, block)
-                if (correctedRecipe === DummyRecipe) return@updater
-                crafterInventory.setItem(9, correctedRecipe?.result)
-            }
-        updater(e.view, 0, null, null)
-        NmsAccessor.instance.addSlotChangedListener(crafterResultCorrector, e.view, updater)
+        val slotListener: NmsAccessor.SlotListener = slotListener@ { inventoryView, _, _, _ ->
+            val crafterInventory = inventoryView.topInventory as? CrafterInventory ?: return@slotListener
+            val block = crafterInventory.location?.block ?: return@slotListener
+            // We do not have the original recipe so instead we pass a dummy recipe and check if
+            // that is what is returned, if so, whatever the result already is, is valid
+            // otherwise it should be corrected to the found recipe's result, or null
+            val correctedRecipe = getCorrectedCrafterRecipe(DummyRecipe, block)
+            if (correctedRecipe === DummyRecipe) return@slotListener
+            crafterInventory.setItem(9, correctedRecipe?.result)
+        }
+        slotListener(e.view, 0, null, null)
+        NmsAccessor.instance.addSlotChangedListener(crafterResultCorrector, e.view, slotListener)
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

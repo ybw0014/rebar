@@ -55,7 +55,9 @@ interface NmsAccessor {
 
     fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity
 
-    fun addSlotChangedListener(key: NamespacedKey, inventoryView: InventoryView, listener: (inventoryView: InventoryView, slot: Int, oldItemStack: ItemStack?, newItemStack: ItemStack?) -> Unit)
+    typealias SlotListener = (inventoryView: InventoryView, slot: Int, oldItemStack: ItemStack?, newItemStack: ItemStack?) -> Unit
+
+    fun addSlotChangedListener(key: NamespacedKey, inventoryView: InventoryView, listener: SlotListener)
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")

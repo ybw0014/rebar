@@ -187,7 +187,7 @@ object NmsAccessorImpl : NmsAccessor {
 
     override fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity = BlockTextureEntityImpl(block)
 
-    override fun addSlotChangedListener(key: NamespacedKey, inventoryView: InventoryView, listener: (inventoryView: InventoryView, slot: Int, oldItemStack: ItemStack?, newItemStack: ItemStack?) -> Unit) {
+    override fun addSlotChangedListener(key: NamespacedKey, inventoryView: InventoryView, listener: NmsAccessor.SlotListener) {
         val inventoryView = inventoryView as CraftInventoryView<*, *>
         inventoryView.handle.addSlotListener(KeyedContainerListener(CraftNamespacedKey.toMinecraft(key), listener))
     }
