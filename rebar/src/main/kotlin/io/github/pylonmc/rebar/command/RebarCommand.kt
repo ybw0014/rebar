@@ -458,7 +458,7 @@ private val researchPointsSubtract = buildCommand("subtract") {
     }
 }
 
-private val researchPointQuery = buildCommand("get") {
+private val researchPointGet = buildCommand("get") {
     argument("player", ArgumentTypes.player()) {
         permission("rebar.command.research.points.get")
         executes { sender ->
@@ -478,7 +478,7 @@ private val researchPoints = buildCommand("points") {
     then(researchPointsSet)
     then(researchPointsAdd)
     then(researchPointsSubtract)
-    then(researchPointQuery)
+    then(researchPointGet)
 }
 
 private val research = buildCommand("research") {
