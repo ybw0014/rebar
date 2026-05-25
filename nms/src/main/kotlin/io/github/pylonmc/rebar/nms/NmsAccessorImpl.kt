@@ -10,10 +10,12 @@ import io.github.pylonmc.rebar.i18n.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.nms.entity.BlockTextureEntityImpl
 import io.github.pylonmc.rebar.nms.recipe.AccessibleCachedCheck
 import io.github.pylonmc.rebar.nms.recipe.HandlerRecipeBookClick
+import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.papermc.paper.adventure.PaperAdventure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
+import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.TextComponentTagVisitor
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
@@ -53,6 +55,8 @@ import java.lang.reflect.Field
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.math.max
+import kotlin.math.min
 import com.mojang.datafixers.util.Pair as NmsPair
 import net.minecraft.world.entity.EquipmentSlot as NmsEquipmentSlot
 
@@ -208,6 +212,19 @@ object NmsAccessorImpl : NmsAccessor {
     }
 
     override fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity = BlockTextureEntityImpl(block)
+
+    override fun isOccluding(block: Block) = (block as CraftBlock).blockState.canOcclude()
+
+    override fun blocksBetween(from: BlockPosition, to: BlockPosition) = BlockPos.betweenClosedStream(
+        min(from.x, to.x), min(from.y, to.y), min(from.z, to.z),
+        max(from.x, to.x), max(from.y, to.y), max(from.z, to.z)
+    ).let {
+        val blocks = mutableListOf<Block>()
+        for (pos in it) {
+            blocks.add(from.world?.getBlockAt(pos.x, pos.y, pos.z) ?: continue)
+        }
+        blocks
+    }
 
     override fun setFurnaceRecipeCache(block: Block, recipe: NamespacedKey) {
         val block = block as CraftBlock
