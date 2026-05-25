@@ -14,6 +14,8 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataContainer
 import org.jetbrains.annotations.ApiStatus
@@ -53,6 +55,10 @@ interface NmsAccessor {
     fun hasTracker(entity: Entity): Boolean
 
     fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity
+
+    typealias SlotListener = (inventoryView: InventoryView, slot: Int, oldItemStack: ItemStack?, newItemStack: ItemStack?) -> Unit
+
+    fun addSlotChangedListener(key: NamespacedKey, inventoryView: InventoryView, listener: SlotListener)
 
     fun isOccluding(block: Block): Boolean
 

@@ -8,6 +8,7 @@ import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
 import io.github.pylonmc.rebar.i18n.PlayerTranslationHandler
 import io.github.pylonmc.rebar.i18n.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.nms.entity.BlockTextureEntityImpl
+import io.github.pylonmc.rebar.nms.inventory.KeyedContainerListener
 import io.github.pylonmc.rebar.nms.recipe.AccessibleCachedCheck
 import io.github.pylonmc.rebar.nms.recipe.HandlerRecipeBookClick
 import io.github.pylonmc.rebar.util.position.BlockPosition
@@ -38,6 +39,7 @@ import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.craftbukkit.block.CraftBlock
 import org.bukkit.craftbukkit.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.entity.CraftPlayer
+import org.bukkit.craftbukkit.inventory.CraftInventoryView
 import org.bukkit.craftbukkit.inventory.CraftItemStack
 import org.bukkit.craftbukkit.inventory.CraftItemType
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer
@@ -46,6 +48,8 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataContainer
 import java.lang.invoke.MethodHandle
@@ -212,6 +216,11 @@ object NmsAccessorImpl : NmsAccessor {
     }
 
     override fun createBlockTextureEntity(block: RebarBlock): BlockTextureEntity = BlockTextureEntityImpl(block)
+
+    override fun addSlotChangedListener(key: NamespacedKey, inventoryView: InventoryView, listener: NmsAccessor.SlotListener) {
+        val inventoryView = inventoryView as CraftInventoryView<*, *>
+        inventoryView.handle.addSlotListener(KeyedContainerListener(CraftNamespacedKey.toMinecraft(key), listener))
+    }
 
     override fun isOccluding(block: Block) = (block as CraftBlock).blockState.canOcclude()
 
