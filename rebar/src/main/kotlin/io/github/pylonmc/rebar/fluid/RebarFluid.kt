@@ -32,6 +32,8 @@ open class RebarFluid(
     private val tags: MutableList<RebarFluidTag>,
 ) : Keyed {
 
+    val addon = getAddon(key)
+
     val name = nameWithoutColor.color(color)
 
     private val internalItem by lazy {
@@ -43,8 +45,6 @@ open class RebarFluid(
         for (tag in tags) {
             builder.lore(tag.displayText)
         }
-
-        builder.lore(getAddon(key).footerName)
 
         builder.build()
     }
@@ -62,7 +62,6 @@ open class RebarFluid(
 
     init {
         if (key !in nameWarningsSuppressed) {
-            val addon = RebarRegistry.ADDONS[NamespacedKey(key.namespace, key.namespace)]!!
             for (locale in addon.languages) {
                 val translationKey = "${key.namespace}.fluid.${key.key}"
                 if (!addon.translator.canTranslate(translationKey, locale)) {
