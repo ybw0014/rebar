@@ -59,6 +59,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.FallingBlock
+import org.bukkit.entity.Interaction
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
@@ -284,12 +285,16 @@ object Rebar : JavaPlugin(), RebarAddon {
         RebarItem.register<RebarGuide>(RebarGuide.STACK)
         RebarGuide.hideItem(RebarGuide.KEY)
 
+        RebarEntity.register<Interaction, RebarGhostBlockHolder.GhostBlockHitbox>(
+            RebarGhostBlockHolder.GhostBlockHitbox.KEY
+        )
+
         RebarEntity.register<BlockDisplay, RebarGhostBlockHolder.VanillaGhostBlock>(
-            RebarGhostBlockHolder.VanillaGhostBlock.KEY,
+            RebarGhostBlockHolder.VanillaGhostBlock.KEY
         )
 
         RebarEntity.register<ItemDisplay, RebarGhostBlockHolder.RebarGhostBlock>(
-            RebarGhostBlockHolder.RebarGhostBlock.KEY,
+            RebarGhostBlockHolder.RebarGhostBlock.KEY
         )
 
         RebarEntity.register<ItemDisplay, FluidEndpointDisplay>(FluidEndpointDisplay.KEY)

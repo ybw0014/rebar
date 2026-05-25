@@ -18,9 +18,7 @@ import io.papermc.paper.event.block.BlockBreakBlockEvent
 import org.bukkit.ExplosionResult
 import org.bukkit.Material
 import org.bukkit.block.Block
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.FallingBlock
-import org.bukkit.entity.Item
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -32,8 +30,7 @@ import org.bukkit.event.entity.EntityRemoveEvent
 import org.bukkit.event.player.PlayerBucketEmptyEvent
 import org.bukkit.event.world.StructureGrowEvent
 import org.bukkit.inventory.ItemStack
-import java.util.UUID
-import java.util.WeakHashMap
+import java.util.*
 
 
 /**
@@ -50,7 +47,6 @@ internal object BlockListener : MultiListener {
     @MultiHandler(priorities = [ EventPriority.LOWEST, EventPriority.MONITOR ], ignoreCancelled = true)
     private fun blockPlace(event: BlockPlaceEvent, priority: EventPriority) {
         val item = event.itemInHand
-        val player = event.player
 
         if (!item.type.isBlock) {
             return
@@ -72,7 +68,7 @@ internal object BlockListener : MultiListener {
             }
         }
 
-        val context = BlockCreateContext.PlayerPlace(player, item, event)
+        val context = BlockCreateContext.PlayerPlace(item, event)
         if (priority == EventPriority.LOWEST && !rebarItem.prePlace(context)) {
             event.isCancelled = true
         } else if (priority == EventPriority.MONITOR) {
