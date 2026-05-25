@@ -8,6 +8,7 @@ import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.recipe.RecipeType.Companion.vanillaCraftingRecipes
 import io.github.pylonmc.rebar.recipe.vanilla.CookingRecipeWrapper
 import io.github.pylonmc.rebar.recipe.vanilla.VanillaRecipeType
+import io.github.pylonmc.rebar.recipe.vanilla.recipeType
 import io.github.pylonmc.rebar.util.isRebarAndIsNot
 import io.github.pylonmc.rebar.util.plainText
 import io.github.pylonmc.rebar.util.rebarKey
@@ -228,12 +229,54 @@ internal object RebarRecipeListener : Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
+    private fun onStartCook(e: FurnaceStartSmeltEvent) {
+        if (RebarItemSchema.fromStack(e.source) == null) return
+
+        val originalRecipe = e.recipe
+        if (originalRecipe.key !in VanillaRecipeType.nonRebarRecipes) {
+            return
+        }
+
+        val originalType = originalRecipe.recipeType
+        if (originalType == null) {
+            e.totalCookTime = 0 // instantly complete so that it doesn't show progress bar, this will get canceled in BlockCookEvent
+            return
+        }
+
+        for (recipe in originalType.recipes) {
+            if (recipe is CookingRecipeWrapper && recipe.key !in VanillaRecipeType.nonRebarRecipes && recipe.recipe.inputChoice.test(e.source)) {
+                e.totalCookTime = recipe.recipe.cookingTime
+                NmsAccessor.instance.setFurnaceRecipeCache(e.block, recipe.key)
+                break
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     private fun onCook(e: BlockCookEvent) {
         if (RebarItemSchema.fromStack(e.source) == null) return
 
-        for (recipe in RecipeType.vanillaCookingRecipes()) {
-            if (recipe.key !in VanillaRecipeType.nonRebarRecipes && recipe.recipe.inputChoice.test(e.source)) {
-                e.result = recipe.recipe.result.clone()
+        val originalRecipe = e.recipe
+        if (originalRecipe == null) {
+            e.isCancelled = true
+            return
+        }
+
+        if (originalRecipe.key !in VanillaRecipeType.nonRebarRecipes) {
+            // already handled correctly
+            return
+        }
+
+        val originalType = originalRecipe.recipeType
+        if (originalType == null) {
+            e.isCancelled = true
+            return
+        }
+
+        for (recipe in originalType.recipes) {
+            if (recipe is CookingRecipeWrapper && recipe.key !in VanillaRecipeType.nonRebarRecipes && recipe.recipe.inputChoice.test(e.source)) {
+                e.result = recipe.recipe.result
+                NmsAccessor.instance.setFurnaceRecipeCache(e.block, recipe.key)
                 break
             }
         }
