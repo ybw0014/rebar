@@ -22,6 +22,7 @@ import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.TranslationArgumentLike
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
@@ -636,5 +637,10 @@ fun CoroutineContext.createChildContext(): CoroutineContext = this + Job(this[Jo
  * @return Whether the entity has at least one tracking player, a tracking player is just a player who has & is receiving packets for the entity.
  */
 fun Entity.hasTracker() = NmsAccessor.instance.hasTracker(this)
+
+@JvmName("colorToTextColor")
+fun Color.toTextColor(): TextColor {
+    return TextColor.color(this.red, this.green, this.blue);
+}
 
 const val FLUID_EPSILON = 1.0e-6
