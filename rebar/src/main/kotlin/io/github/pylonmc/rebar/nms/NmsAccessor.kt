@@ -14,6 +14,7 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
@@ -90,6 +91,14 @@ interface NmsAccessor {
      * Identical to the [ItemFactory.createItemStack] method except it works with rebar ids
      */
     fun createItemStack(input: String): ItemStack
+
+    /**
+     * Notify the inventory that it has been changed, this is needed for things like Comparators and other observers
+     *
+     * Note: In the future we won't need this assuming the PR to paper is made & merged, for some reason they only
+     * call this method on item remove, and not on set.
+     */
+    fun setChanged(inventory: Inventory)
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")

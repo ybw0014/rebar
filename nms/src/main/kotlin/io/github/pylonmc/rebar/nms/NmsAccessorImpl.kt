@@ -44,6 +44,7 @@ import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.craftbukkit.block.CraftBlock
 import org.bukkit.craftbukkit.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.entity.CraftPlayer
+import org.bukkit.craftbukkit.inventory.CraftInventory
 import org.bukkit.craftbukkit.inventory.CraftInventoryView
 import org.bukkit.craftbukkit.inventory.CraftItemStack
 import org.bukkit.craftbukkit.inventory.CraftItemType
@@ -283,5 +284,10 @@ object NmsAccessorImpl : NmsAccessor {
         } catch (ex: CommandSyntaxException) {
             throw IllegalArgumentException("Could not parse ItemStack: $input", ex);
         }
+    }
+
+    override fun setChanged(inventory: Inventory) {
+        val inventory = inventory as CraftInventory
+        inventory.inventory.setChanged()
     }
 }
