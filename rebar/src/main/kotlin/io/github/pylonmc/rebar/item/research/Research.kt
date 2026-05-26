@@ -70,6 +70,11 @@ class Research(
     )
 
     fun register() {
+        for (itemId in unlocks) {
+            if (itemId !in RebarRegistry.ITEMS) {
+                Rebar.logger.warning("Research ${this.key} includes non-existent item id $itemId")
+            }
+        }
         RebarRegistry.RESEARCHES.register(this)
     }
 
