@@ -14,8 +14,8 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryView
+import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataContainer
 import org.jetbrains.annotations.ApiStatus
@@ -85,6 +85,11 @@ interface NmsAccessor {
      * the furnace smelts, it uses the correct recipe and doesn't get deadlocked.
      */
     fun setFurnaceRecipeCache(block: Block, recipe: NamespacedKey)
+
+    /**
+     * Identical to the [ItemFactory.createItemStack] method except it works with rebar ids
+     */
+    fun createItemStack(input: String): ItemStack
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")
