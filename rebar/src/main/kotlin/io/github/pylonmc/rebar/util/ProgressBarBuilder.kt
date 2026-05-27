@@ -7,11 +7,10 @@ import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Color
 import kotlin.math.roundToInt
 
-class ProgressBar {
+class ProgressBarBuilder {
 
     var proportion: Double? = null
     var bars: Int = 20
-    var filledBars: Int? = null
     var barColor: TextColor = TextColor.fromHexString("#ffffff")!!
     var emptyColor: TextColor = TextColor.fromHexString("#4d4d4d")!!
     var barString = "|"
@@ -22,7 +21,6 @@ class ProgressBar {
     fun bars(bars: Int) = apply { this.bars = bars }
 
     fun proportion(proportion: Double) = apply { this.proportion = proportion }
-    fun filledBars(filledBars: Int) = apply { this.filledBars = filledBars }
 
     fun barColor(barColor: TextColor) = apply { this.barColor = barColor }
     fun barColor(barColor: Color) = apply { this.barColor = barColor.toTextColor() }
@@ -38,11 +36,8 @@ class ProgressBar {
     fun suffix(component: ComponentLike) = apply { this.suffix = component }
 
     fun build(): Component {
-        var filledBars: Int? = this.filledBars
-        if (proportion != null) {
-            filledBars = (bars * proportion!!).roundToInt()
-        }
-        check(filledBars != null) { "You need to call either `proportion()` or `filledBars()`" }
+        check(proportion != null) { "Progress bar did not have its proportion set; did you forget to call `.proportion(...)`?" }
+        val filledBars = (bars * proportion!!).roundToInt()
 
         return Component.text(leftString)
             .append(Component.text(barString.repeat(filledBars)).color(barColor))
