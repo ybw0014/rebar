@@ -10,6 +10,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -99,6 +100,14 @@ interface NmsAccessor {
      * call this method on item remove, and not on set.
      */
     fun setChanged(inventory: Inventory)
+
+    /**
+     * Simulates a player interaction using the item specified, if [block] and [blockFace] are specified it simulates using the item on
+     * that block.
+     *
+     * Note: This calls all vanilla logic, PlayerInteractEvent, BlockPlace, etc, this will **actually** use the item/block
+     */
+    fun simulateInteract(player: Player, itemStack: ItemStack, hand: EquipmentSlot, block: Block?, blockFace: BlockFace?)
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")

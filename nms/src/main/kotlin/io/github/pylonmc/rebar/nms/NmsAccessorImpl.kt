@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.minecraft.commands.arguments.item.ItemParser
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.TextComponentTagVisitor
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
@@ -34,10 +35,12 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity
 import net.minecraft.world.level.block.state.properties.Property
+import net.minecraft.world.phys.BlockHitResult
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.CraftEquipmentSlot
 import org.bukkit.craftbukkit.CraftRegistry
 import org.bukkit.craftbukkit.CraftWorld
@@ -289,5 +292,20 @@ object NmsAccessorImpl : NmsAccessor {
     override fun setChanged(inventory: Inventory) {
         val inventory = inventory as CraftInventory
         inventory.inventory.setChanged()
+    }
+
+    override fun simulateInteract(player: Player, itemStack: ItemStack, hand: EquipmentSlot, block: Block?, blockFace: BlockFace?) {
+        val nmsPlayer = (player as CraftPlayer).handle
+        val level = nmsPlayer.level()
+        val nmsStack = (itemStack as CraftItemStack).handle
+        val nmsHand = CraftEquipmentSlot.getHand(hand)
+        if (block == null || blockFace == null) {
+            nmsPlayer.gameMode.useItem(nmsPlayer, level, nmsStack, nmsHand)
+        } else {
+            val nmsPos = (block as CraftBlock).position
+            val nmsDirection = CraftBlock.blockFaceToNotch(blockFace) ?: throw IllegalArgumentException("Invalid block face $blockFace")
+            val nmsLoc = nmsPos.center.add(nmsDirection.unitVec3.scale(0.5))
+            nmsPlayer.gameMode.useItemOn(nmsPlayer, level, nmsStack, nmsHand, BlockHitResult(nmsLoc, nmsDirection, nmsPos, false))
+        }
     }
 }

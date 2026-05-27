@@ -264,7 +264,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      *
      * @return the item the block should give when middle clicked, or null if none
      */
-    open fun getPickItem() = defaultItem?.getItemStack()
+    open fun getPickItem(player: Player) = defaultItem?.getItemStack()
 
     /**
      * Called when debug info is requested for the block by someone
