@@ -365,8 +365,8 @@ internal object RebarRecipeListener : Listener {
         var resultItem: ItemStack? = null
 
         // Allow repairing with rebar items
-        if (firstSchema.isType(RebarRepairableItem::class.java) && firstItem.isRepairable()) {
-            val repairable = RebarItem.fromStack(firstItem, RebarRepairableItem::class.java)!!
+        if (firstSchema.isType(RepairableRebarItem::class.java) && firstItem.isRepairable()) {
+            val repairable = RebarItem.fromStack(firstItem, RepairableRebarItem::class.java)!!
             if (repairable.isValidRepairItem(secondItem)) {
                 var price = 0
                 var namingPrice = 0

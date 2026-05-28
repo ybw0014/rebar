@@ -2,7 +2,7 @@ package io.github.pylonmc.rebar.content.debug
 
 import io.github.pylonmc.rebar.block.BlockStorage
 import io.github.pylonmc.rebar.block.RebarBlock
-import io.github.pylonmc.rebar.block.base.RebarTickingBlock
+import io.github.pylonmc.rebar.block.base.TickingRebarBlock
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.entity.EntityStorage
 import io.github.pylonmc.rebar.event.RebarBlockSerializeEvent
@@ -72,7 +72,7 @@ internal class DebugWaxedWeatheredCutCopperStairs(stack: ItemStack)
         )
         player.sendDebug(
             when (rebarBlock) {
-                is RebarTickingBlock -> if (RebarTickingBlock.isTicking(rebarBlock)) {
+                is TickingRebarBlock -> if (TickingRebarBlock.isTicking(rebarBlock)) {
                     "ticking.ticking"
                 } else {
                     "ticking.error"

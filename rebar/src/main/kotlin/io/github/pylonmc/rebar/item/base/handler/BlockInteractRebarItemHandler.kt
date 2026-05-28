@@ -5,14 +5,14 @@ import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
 import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
 import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemListener
-import io.github.pylonmc.rebar.item.base.RebarCooldownableItem
+import io.github.pylonmc.rebar.item.base.CooldownRebarItem
 import io.github.pylonmc.rebar.item.research.Research.Companion.canUse
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface BlockInteractRebarItemHandler : RebarCooldownableItem {
+interface BlockInteractRebarItemHandler : CooldownRebarItem {
     /**
      * May be fired twice (once for each hand), and is fired for both left and right clicks.
      */

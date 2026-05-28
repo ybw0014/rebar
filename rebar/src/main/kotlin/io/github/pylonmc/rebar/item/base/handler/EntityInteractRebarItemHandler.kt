@@ -5,13 +5,13 @@ import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
 import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
 import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemListener
-import io.github.pylonmc.rebar.item.base.RebarCooldownableItem
+import io.github.pylonmc.rebar.item.base.CooldownRebarItem
 import io.github.pylonmc.rebar.item.research.Research.Companion.canUse
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface EntityInteractRebarItemHandler : RebarCooldownableItem {
+interface EntityInteractRebarItemHandler : CooldownRebarItem {
     /**
      * Called when a player right clicks an entity while holding the item.
      */
