@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -10,7 +10,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarConsumable {
+interface ConsumableRebarItemHandler {
     /**
      * Called when the item is consumed by a player.
      */
@@ -20,7 +20,7 @@ interface RebarConsumable {
     companion object : MultiListener {
         @UniversalHandler
         private fun onConsumed(event: PlayerItemConsumeEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.item, RebarConsumable::class.java)
+            val rebarItem = RebarItem.fromStack(event.item, ConsumableRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 event.isCancelled = true

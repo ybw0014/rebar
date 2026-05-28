@@ -6,4 +6,4 @@ package io.github.pylonmc.rebar.item.base
  * For example, if you create an `EpicDiamond` item and it implements this class, you'll be
  * able to use it as a normal diamond in a crafting grid.
  */
-interface VanillaCraftingItem
+interface VanillaCraftingIngredientItem

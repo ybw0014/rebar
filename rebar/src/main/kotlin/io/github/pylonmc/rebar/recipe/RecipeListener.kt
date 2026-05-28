@@ -43,7 +43,7 @@ internal object RebarRecipeListener : Listener {
         if (recipe !is Keyed) return
         val inventory = e.inventory
 
-        val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingItem>() }
+        val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingIngredientItem>() }
         val isNotRebarCraftingRecipe = recipe.key in VanillaRecipeType.nonRebarRecipes
 
         // Prevent the erroneous crafting of vanilla items with Rebar ingredients
@@ -73,7 +73,7 @@ internal object RebarRecipeListener : Listener {
             val firstSchema = RebarItemSchema.fromStack(firstItem)
             val secondSchema = RebarItemSchema.fromStack(secondItem)
             if (firstSchema == null || secondSchema == null || firstSchema != secondSchema
-                || firstSchema.isType(RebarUnmergeable::class.java)
+                || firstSchema.isType(RebarUnmergeableItem::class.java)
                 || firstItem.amount != 1 || secondItem.amount != 1
                 || firstItem.hasData(DataComponentTypes.UNBREAKABLE) || secondItem.hasData(DataComponentTypes.UNBREAKABLE)
                 || !firstItem.hasData(DataComponentTypes.MAX_DAMAGE) || !secondItem.hasData(DataComponentTypes.MAX_DAMAGE)
@@ -113,7 +113,7 @@ internal object RebarRecipeListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onCartography(e: CartographyItemEvent) {
         val inventory = e.inventory
-        val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingItem>() }
+        val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingIngredientItem>() }
 
         if (hasRebarItems) {
             inventory.result = null
@@ -129,7 +129,7 @@ internal object RebarRecipeListener : Listener {
         val crafter = block.getState(false) as? Crafter ?: return null
         val inventory = crafter.inventory
 
-        val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingItem>() }
+        val hasRebarItems = inventory.any { it.isRebarAndIsNot<VanillaCraftingIngredientItem>() }
         if (!hasRebarItems) {
             return originalRecipe
         }
@@ -222,7 +222,7 @@ internal object RebarRecipeListener : Listener {
         if (inventory is StonecutterInventory) {
             val input = inventory.inputItem ?: return
 
-            if (input.isRebarAndIsNot<VanillaCraftingItem>()) {
+            if (input.isRebarAndIsNot<VanillaCraftingIngredientItem>()) {
                 e.isCancelled = true
             }
         }
@@ -284,14 +284,14 @@ internal object RebarRecipeListener : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onFuelBurn(e: FurnaceBurnEvent) {
-        if (e.fuel.isRebarAndIsNot<VanillaCookingFuel>()) {
+        if (e.fuel.isRebarAndIsNot<VanillaFurnaceFuel>()) {
             e.isCancelled = true
             return
         }
 
         val furnace = (e.block.state as Furnace)
         val input = furnace.inventory.smelting
-        if (input != null && input.isRebarAndIsNot<VanillaCookingItem>()) {
+        if (input != null && input.isRebarAndIsNot<VanillaFurnaceIngredientItem>()) {
             var rebarRecipe: CookingRecipeWrapper? = null
             for (recipe in RecipeType.vanillaCookingRecipes()) {
                 if (recipe.key !in VanillaRecipeType.nonRebarRecipes && recipe.recipe.inputChoice.test(input)) {
@@ -346,7 +346,7 @@ internal object RebarRecipeListener : Listener {
             return
         } else if (firstSchema == null) {
             // If it's a vanilla item being manipulated by a rebar item, prevent it unless it's a VanillaAnvilItem
-            if (secondSchema != null && !secondSchema.isType(VanillaAnvilItem::class.java)) {
+            if (secondSchema != null && !secondSchema.isType(VanillaAnvilUseItem::class.java)) {
                 e.result = null
             }
             return
@@ -365,8 +365,8 @@ internal object RebarRecipeListener : Listener {
         var resultItem: ItemStack? = null
 
         // Allow repairing with rebar items
-        if (firstSchema.isType(RebarRepairable::class.java) && firstItem.isRepairable()) {
-            val repairable = RebarItem.fromStack(firstItem, RebarRepairable::class.java)!!
+        if (firstSchema.isType(RebarRepairableItem::class.java) && firstItem.isRepairable()) {
+            val repairable = RebarItem.fromStack(firstItem, RebarRepairableItem::class.java)!!
             if (repairable.isValidRepairItem(secondItem)) {
                 var price = 0
                 var namingPrice = 0
@@ -444,7 +444,7 @@ internal object RebarRecipeListener : Listener {
             }
 
             val usingBook = secondItem.hasData(DataComponentTypes.STORED_ENCHANTMENTS)
-            if (!usingBook && (firstSchema != secondSchema || firstSchema.isType(RebarUnmergeable::class.java))) {
+            if (!usingBook && (firstSchema != secondSchema || firstSchema.isType(RebarUnmergeableItem::class.java))) {
                 e.result = null
             } else if (!firstItem.matchesWithoutData(resultItem, setOf(
                     DataComponentTypes.ENCHANTMENTS, DataComponentTypes.STORED_ENCHANTMENTS,

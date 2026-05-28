@@ -28,7 +28,7 @@ public class EntityEventError extends RebarEntity<LivingEntity> implements Rebar
     }
 
     @Override
-    public void onDamage(@NotNull EntityDamageEvent event, @NotNull EventPriority priority) {
+    public void onDamaged(@NotNull EntityDamageEvent event, @NotNull EventPriority priority) {
         throw new RuntimeException("This exception is thrown as part of a test");
     }
 }

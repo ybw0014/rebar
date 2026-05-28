@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 /**
  * An item should implement this interface to tick when a player has the item in their inventory
  */
-interface RebarInventoryTicker {
+interface RebarInventoryTickerItem {
     /**
      * Called when the item is detected in the player's inventory.
      * will be called at [baseTickInterval] * [RebarConfig.inventoryTickerBaseRate

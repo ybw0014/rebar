@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -12,16 +12,16 @@ import org.bukkit.event.player.PlayerItemDamageEvent
 import org.bukkit.event.player.PlayerItemMendEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarItemDamageable {
+interface DurabilityRebarItemHandler {
     /**
      * Called when the item is damaged (loses durability).
      */
     fun onItemDamaged(event: PlayerItemDamageEvent, priority: EventPriority) {}
 
     /**
-     * Called when the item is broken.
+     * Called when the item is broken. (no durability left)
      */
-    fun onItemBreaks(event: PlayerItemBreakEvent, priority: EventPriority) {}
+    fun onItemBreak(event: PlayerItemBreakEvent, priority: EventPriority) {}
 
     /**
      * Called when the item is mended (gains durability).
@@ -32,7 +32,7 @@ interface RebarItemDamageable {
     companion object : MultiListener {
         @UniversalHandler
         private fun onItemDamaged(event: PlayerItemDamageEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.item, RebarItemDamageable::class.java)
+            val rebarItem = RebarItem.fromStack(event.item, DurabilityRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 return
@@ -47,14 +47,14 @@ interface RebarItemDamageable {
 
         @UniversalHandler
         private fun onItemBreaks(event: PlayerItemBreakEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.brokenItem, RebarItemDamageable::class.java)
+            val rebarItem = RebarItem.fromStack(event.brokenItem, DurabilityRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 return
             }
 
             try {
-                MultiHandlers.handleEvent(rebarItem, "onItemBreaks", event, priority)
+                MultiHandlers.handleEvent(rebarItem, "onItemBreak", event, priority)
             } catch (e: Exception) {
                 RebarItemListener.logEventHandleErr(event, e, rebarItem)
             }
@@ -62,7 +62,7 @@ interface RebarItemDamageable {
 
         @UniversalHandler
         private fun onItemMended(event: PlayerItemMendEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.item, RebarItemDamageable::class.java)
+            val rebarItem = RebarItem.fromStack(event.item, DurabilityRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 event.isCancelled = true

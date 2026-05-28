@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -6,21 +6,20 @@ import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
 import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemListener
 import org.bukkit.event.EventPriority
-import org.bukkit.event.block.BlockDispenseEvent
+import org.bukkit.event.entity.ExpBottleEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarDispensable {
-    fun onDispense(event: BlockDispenseEvent, priority: EventPriority)
+interface BottleRebarItemHandler : ProjectileRebarItemHandler {
+    fun onBottleBreak(event: ExpBottleEvent)
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun onDispense(event: BlockDispenseEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.item, RebarDispensable::class.java)
-            val dispensable = rebarItem as? RebarItem ?: return
-
+        private fun onBottleBreak(event: ExpBottleEvent, priority: EventPriority) {
+            val rebarItem = RebarItem.fromStack(event.entity.item)
+            if (rebarItem !is BottleRebarItemHandler) return
             try {
-                MultiHandlers.handleEvent(dispensable, "onDispense", event, priority)
+                MultiHandlers.handleEvent(rebarItem, "onBottleBreak", event, priority)
             } catch (e: Exception) {
                 RebarItemListener.logEventHandleErr(event, e, rebarItem)
             }

@@ -7,7 +7,7 @@ import net.kyori.adventure.key.Key
  * Represents a [RebarItem] that is wearable piece of armor.
  * Right now this is only used to determine the equipment type for custom armor textures.
  */
-interface RebarArmor {
+interface RebarArmorItem {
     /**
      * The equipment type of this armor piece, used for custom armor textures.
      * All armor pieces of the same type should have the same equipment type.

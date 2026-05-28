@@ -8,4 +8,4 @@ package io.github.pylonmc.rebar.item.base
  * interface, it will be treated the same as a normal piece of cobblestone when you attempt
  * to smelt it.
  */
-interface VanillaCookingItem
+interface VanillaFurnaceIngredientItem

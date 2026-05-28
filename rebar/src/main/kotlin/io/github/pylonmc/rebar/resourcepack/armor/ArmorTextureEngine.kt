@@ -5,7 +5,7 @@ package io.github.pylonmc.rebar.resourcepack.armor
 import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemSchema
-import io.github.pylonmc.rebar.item.base.RebarArmor
+import io.github.pylonmc.rebar.item.base.RebarArmorItem
 import io.github.pylonmc.rebar.util.rebarKey
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.Equippable
@@ -31,7 +31,7 @@ object ArmorTextureEngine {
         }
 
         val schema = RebarItemSchema.fromStack(stack)
-        if (schema == null || !RebarItem.isRebarItem(stack, RebarArmor::class.java)) {
+        if (schema == null || !RebarItem.isRebarItem(stack, RebarArmorItem::class.java)) {
             return
         }
 
@@ -42,7 +42,7 @@ object ArmorTextureEngine {
             return
         }
 
-        val armor = RebarItem.fromStack(template, RebarArmor::class.java) ?: return
+        val armor = RebarItem.fromStack(template, RebarArmorItem::class.java) ?: return
         stack.setData(DataComponentTypes.EQUIPPABLE, Equippable.equippable(component.slot())
             .assetId(armor.equipmentType)
             .swappable(component.swappable())
@@ -58,7 +58,7 @@ object ArmorTextureEngine {
     }
 
     fun resetItem(item: ItemStack) {
-        val armor = RebarItem.fromStack(item, RebarArmor::class.java)
+        val armor = RebarItem.fromStack(item, RebarArmorItem::class.java)
         if (armor !is RebarItem) return
 
         val component = item.getData(DataComponentTypes.EQUIPPABLE) ?: return

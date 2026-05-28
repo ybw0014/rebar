@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import com.destroystokyo.paper.event.player.PlayerReadyArrowEvent
 import io.github.pylonmc.rebar.event.api.MultiListener
@@ -11,7 +11,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityShootBowEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarBow {
+interface BowRebarItemHandler {
     /**
      * Called when an arrow is being selected to fire from this bow.
      */
@@ -20,13 +20,13 @@ interface RebarBow {
     /**
      * Called when an arrow is shot from this bow.
      */
-    fun onBowFired(event: EntityShootBowEvent, priority: EventPriority) {}
+    fun onBowShoot(event: EntityShootBowEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
         private fun onBowReady(event: PlayerReadyArrowEvent, priority: EventPriority) {
-            val bow = RebarItem.fromStack(event.bow, RebarBow::class.java)
+            val bow = RebarItem.fromStack(event.bow, BowRebarItemHandler::class.java)
             if (bow !is RebarItem) return
             if (!event.player.canUse(bow, false)) {
                 event.isCancelled = true
@@ -41,11 +41,11 @@ interface RebarBow {
         }
 
         @UniversalHandler
-        private fun onBowFired(event: EntityShootBowEvent, priority: EventPriority) {
-            val bow = event.bow?.let { RebarItem.fromStack(it, RebarBow::class.java) }
+        private fun onBowShoot(event: EntityShootBowEvent, priority: EventPriority) {
+            val bow = event.bow?.let { RebarItem.fromStack(it, BowRebarItemHandler::class.java) }
             if (bow !is RebarItem) return
             try {
-                MultiHandlers.handleEvent(bow, "onBowFired", event, priority)
+                MultiHandlers.handleEvent(bow, "onBowShoot", event, priority)
             } catch (e: Exception) {
                 RebarItemListener.logEventHandleErr(event, e, bow)
             }

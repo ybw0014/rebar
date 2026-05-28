@@ -9,9 +9,11 @@ import io.github.pylonmc.rebar.config.Config
 import io.github.pylonmc.rebar.config.ConfigSection
 import io.github.pylonmc.rebar.config.ContributorConfig
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter
-import io.github.pylonmc.rebar.item.RebarItemSchema
+import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.i18n.customMiniMessage
 import io.github.pylonmc.rebar.item.ItemTypeWrapper
+import io.github.pylonmc.rebar.item.RebarItemSchema
+import io.github.pylonmc.rebar.item.base.handler.ProjectileRebarItemHandler
 import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.position.BlockPosition
@@ -28,9 +30,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.Entity
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.event.Event
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
@@ -668,5 +668,19 @@ fun CoroutineContext.createChildContext(): CoroutineContext = this + Job(this[Jo
  * @return Whether the entity has at least one tracking player, a tracking player is just a player who has & is receiving packets for the entity.
  */
 fun Entity.hasTracker() = NmsAccessor.instance.hasTracker(this)
+
+fun Projectile.sourceItem(): ItemStack? {
+    return when(this) {
+        is ThrowableProjectile -> this.item
+        is SizedFireball -> this.displayItem
+        is AbstractArrow -> this.itemStack
+        is Firework -> this.item
+        else -> persistentDataContainer.get(ProjectileRebarItemHandler.sourceItemKey, RebarSerializers.ITEM_STACK)
+    }
+}
+
+fun Entity.getWeaponItem(): ItemStack? {
+    return NmsAccessor.instance.getWeaponItem(this)
+}
 
 const val FLUID_EPSILON = 1.0e-6

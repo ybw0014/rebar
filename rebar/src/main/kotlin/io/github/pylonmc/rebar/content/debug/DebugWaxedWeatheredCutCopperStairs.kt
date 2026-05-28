@@ -9,9 +9,9 @@ import io.github.pylonmc.rebar.event.RebarBlockSerializeEvent
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandler
 import io.github.pylonmc.rebar.i18n.RebarArgument
 import io.github.pylonmc.rebar.item.RebarItem
-import io.github.pylonmc.rebar.item.base.RebarBlockInteractor
-import io.github.pylonmc.rebar.item.base.RebarItemEntityInteractor
-import io.github.pylonmc.rebar.item.base.RebarWeapon
+import io.github.pylonmc.rebar.item.base.handler.BlockInteractRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.EntityInteractRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.EntityAttackRebarItemHandler
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
 import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.util.position.position
@@ -25,16 +25,16 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
 @Suppress("UnstableApiUsage")
 internal class DebugWaxedWeatheredCutCopperStairs(stack: ItemStack)
-    : RebarItem(stack), RebarBlockInteractor, RebarItemEntityInteractor, RebarWeapon {
+    : RebarItem(stack), BlockInteractRebarItemHandler, EntityInteractRebarItemHandler, EntityAttackRebarItemHandler {
 
     @MultiHandler(priorities = [EventPriority.LOWEST])
-    override fun onUsedToClickBlock(event: PlayerInteractEvent, priority: EventPriority) {
+    override fun onInteractWithBlock(event: PlayerInteractEvent, priority: EventPriority) {
         event.isCancelled = true
         if (event.action == Action.PHYSICAL) return
 
@@ -105,7 +105,7 @@ internal class DebugWaxedWeatheredCutCopperStairs(stack: ItemStack)
     }
 
     @MultiHandler(priorities = [EventPriority.LOWEST])
-    override fun onUsedToDamageEntity(event: EntityDamageByEntityEvent, priority: EventPriority) {
+    override fun onDamageEntity(event: EntityDamageByEntityEvent, priority: EventPriority) {
         event.isCancelled = true
         val player = event.damager as? Player ?: return
         val rebarEntity = EntityStorage.get(event.entity)
@@ -126,7 +126,7 @@ internal class DebugWaxedWeatheredCutCopperStairs(stack: ItemStack)
     }
 
     @MultiHandler(priorities = [EventPriority.LOWEST])
-    override fun onUsedToRightClickEntity(event: PlayerInteractEntityEvent, priority: EventPriority) {
+    override fun onInteractWithEntity(event: PlayerInteractAtEntityEvent, priority: EventPriority) {
         event.isCancelled = true
         val rebarEntity = EntityStorage.get(event.rightClicked)
         val player = event.player

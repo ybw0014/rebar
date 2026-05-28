@@ -43,7 +43,27 @@ import io.github.pylonmc.rebar.recipe.RecipeCompletion
 import io.github.pylonmc.rebar.recipe.RecipeType
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.delayTicks
-import io.github.pylonmc.rebar.item.base.VanillaAnvilItem
+import io.github.pylonmc.rebar.item.base.handler.AnvilUseRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.ArrowRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.BlockBreakRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.BlockInteractRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.BottleRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.BowRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.BrewingStandFuelRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.BucketRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.ConsumableRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.DispenseRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.DropRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.DurabilityRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.EntityAttackRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.EntityInteractRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.FurnaceBurnRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.InteractRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.JoinRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.LingeringPotionRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.PickupRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.ProjectileRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.SplashPotionRebarItemHandler
 import io.github.pylonmc.rebar.util.mergeGlobalConfig
 import io.github.pylonmc.rebar.waila.Waila
 import io.github.pylonmc.rebar.waila.WailaPlaceholders
@@ -147,7 +167,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(ChunkScope, this)
         pm.registerEvents(PlayerScope, this)
         pm.registerEvents(CreativeActionTranslationHandler, this)
-        pm.registerEvents(RebarJoinHandler, this)
+        pm.registerEvents(JoinRebarItemHandler, this)
         ConfettiCreeperListener.register(this, pm)
 
         // Rebar Blocks
@@ -188,27 +208,27 @@ object Rebar : JavaPlugin(), RebarAddon {
         RebarEntityChangedBlock.register(this, pm)
 
         // Rebar Items
-        RebarArrow.register(this, pm)
-        RebarBlockInteractor.register(this, pm)
-        RebarBottle.register(this, pm)
-        RebarBow.register(this, pm)
-        RebarBrewingStandFuel.register(this, pm)
-        RebarBucket.register(this, pm)
-        RebarConsumable.register(this, pm)
-        RebarDispensable.register(this, pm)
-        RebarInteractor.register(this, pm)
-        RebarItemDamageable.register(this, pm)
-        RebarItemEntityInteractor.register(this, pm)
-        RebarJoinHandler.register(this, pm)
-        RebarLingeringPotion.register(this, pm)
-        RebarProjectileItem.register(this, pm)
-        RebarSplashPotion.register(this, pm)
-        RebarTool.register(this, pm)
-        RebarWeapon.register(this, pm)
-        VanillaAnvilItem.register(this, pm)
-        VanillaCookingFuel.register(this, pm)
-        RebarPickupable.register(this, pm)
-        RebarDroppable.register(this, pm)
+        ArrowRebarItemHandler.register(this, pm)
+        BlockInteractRebarItemHandler.register(this, pm)
+        BottleRebarItemHandler.register(this, pm)
+        BowRebarItemHandler.register(this, pm)
+        BrewingStandFuelRebarItemHandler.register(this, pm)
+        BucketRebarItemHandler.register(this, pm)
+        ConsumableRebarItemHandler.register(this, pm)
+        DispenseRebarItemHandler.register(this, pm)
+        InteractRebarItemHandler.register(this, pm)
+        DurabilityRebarItemHandler.register(this, pm)
+        EntityInteractRebarItemHandler.register(this, pm)
+        JoinRebarItemHandler.register(this, pm)
+        LingeringPotionRebarItemHandler.register(this, pm)
+        ProjectileRebarItemHandler.register(this, pm)
+        SplashPotionRebarItemHandler.register(this, pm)
+        BlockBreakRebarItemHandler.register(this, pm)
+        EntityAttackRebarItemHandler.register(this, pm)
+        AnvilUseRebarItemHandler.register(this, pm)
+        FurnaceBurnRebarItemHandler.register(this, pm)
+        PickupRebarItemHandler.register(this, pm)
+        DropRebarItemHandler.register(this, pm)
 
         // Rebar Entities
         EntityListener.register(this, pm)

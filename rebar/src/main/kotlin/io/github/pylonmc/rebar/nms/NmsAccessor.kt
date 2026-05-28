@@ -86,6 +86,13 @@ interface NmsAccessor {
      */
     fun setFurnaceRecipeCache(block: Block, recipe: NamespacedKey)
 
+    /**
+     * Returns the weapon item for the entity
+     *
+     * For ex: If a player is spinning with a riptide trident, returns the trident, otherwise it may return the sword in the main hand
+     */
+    fun getWeaponItem(entity: Entity): ItemStack?
+
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")
             .getDeclaredField("INSTANCE")

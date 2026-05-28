@@ -4,7 +4,7 @@ import io.github.pylonmc.rebar.item.RebarItemSchema
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 
-interface RebarRepairable {
+interface RebarRepairableItem {
     fun getRepairItems(): List<NamespacedKey>
 
     fun isValidRepairItem(item: ItemStack): Boolean {

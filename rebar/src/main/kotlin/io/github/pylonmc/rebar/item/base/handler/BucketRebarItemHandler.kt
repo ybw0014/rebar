@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -11,22 +11,22 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent
 import org.bukkit.event.player.PlayerBucketFillEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarBucket {
+interface BucketRebarItemHandler {
     /**
      * Called when the bucket is emptied.
      */
-    fun onBucketEmptied(event: PlayerBucketEmptyEvent, priority: EventPriority) {}
+    fun onBucketEmpty(event: PlayerBucketEmptyEvent, priority: EventPriority) {}
 
     /**
      * Called when the bucket is filled.
      */
-    fun onBucketFilled(event: PlayerBucketFillEvent, priority: EventPriority) {}
+    fun onBucketFill(event: PlayerBucketFillEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun onBucketEmptied(event: PlayerBucketEmptyEvent, priority: EventPriority) {
-            val rebarItem = event.itemStack?.let { RebarItem.fromStack(it, RebarBucket::class.java) }
+        private fun onBucketEmpty(event: PlayerBucketEmptyEvent, priority: EventPriority) {
+            val rebarItem = event.itemStack?.let { RebarItem.fromStack(it, BucketRebarItemHandler::class.java) }
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 event.isCancelled = true
@@ -34,16 +34,16 @@ interface RebarBucket {
             }
 
             try {
-                MultiHandlers.handleEvent(rebarItem, "onBucketEmptied", event, priority)
+                MultiHandlers.handleEvent(rebarItem, "onBucketEmpty", event, priority)
             } catch (e: Exception) {
                 RebarItemListener.logEventHandleErr(event, e, rebarItem)
             }
         }
 
         @UniversalHandler
-        private fun onBucketFilled(event: PlayerBucketFillEvent, priority: EventPriority) {
+        private fun onBucketFill(event: PlayerBucketFillEvent, priority: EventPriority) {
             val stack = event.player.inventory.getItem(event.hand) // TODO: find out why this doesn't just use the fucking event's item like emptied
-            val rebarItem = RebarItem.fromStack(stack, RebarBucket::class.java)
+            val rebarItem = RebarItem.fromStack(stack, BucketRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 event.isCancelled = true
@@ -51,7 +51,7 @@ interface RebarBucket {
             }
 
             try {
-                MultiHandlers.handleEvent(rebarItem, "onBucketFilled", event, priority)
+                MultiHandlers.handleEvent(rebarItem, "onBucketFill", event, priority)
             } catch (e: Exception) {
                 RebarItemListener.logEventHandleErr(event, e, rebarItem)
             }

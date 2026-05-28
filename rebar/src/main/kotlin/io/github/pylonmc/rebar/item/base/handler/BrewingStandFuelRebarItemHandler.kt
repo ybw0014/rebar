@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -9,21 +9,21 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.inventory.BrewingStandFuelEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarBrewingStandFuel {
+interface BrewingStandFuelRebarItemHandler {
     /**
      * Called when the item is consumed as fuel in a brewing stand.
      */
-    fun onUsedAsBrewingStandFuel(event: BrewingStandFuelEvent, priority: EventPriority)
+    fun onFuelBrewingStand(event: BrewingStandFuelEvent, priority: EventPriority)
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun onUsedAsBrewingStandFuel(event: BrewingStandFuelEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.fuel, RebarBrewingStandFuel::class.java)
+        private fun onFuelBrewingStand(event: BrewingStandFuelEvent, priority: EventPriority) {
+            val rebarItem = RebarItem.fromStack(event.fuel, BrewingStandFuelRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
 
             try {
-                MultiHandlers.handleEvent(rebarItem, "onUsedAsBrewingStandFuel", event, priority)
+                MultiHandlers.handleEvent(rebarItem, "onFuelBrewingStand", event, priority)
             } catch (e: Exception) {
                 RebarItemListener.logEventHandleErr(event, e, rebarItem)
             }

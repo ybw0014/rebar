@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent
 import org.jetbrains.annotations.ApiStatus
 
 interface RebarDamageableEntity {
-    fun onDamage(event: EntityDamageEvent, priority: EventPriority) {}
+    fun onDamaged(event: EntityDamageEvent, priority: EventPriority) {}
     fun onRegainHealth(event: EntityRegainHealthEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
@@ -21,7 +21,7 @@ interface RebarDamageableEntity {
             val rebarEntity = EntityStorage.get(event.entity)
             if (rebarEntity is RebarDamageableEntity) {
                 try {
-                    MultiHandlers.handleEvent(rebarEntity, "onDamage", event, priority)
+                    MultiHandlers.handleEvent(rebarEntity, "onDamaged", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarEntity)
                 }

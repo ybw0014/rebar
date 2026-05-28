@@ -1,14 +1,20 @@
 package io.github.pylonmc.rebar.item.base
 
-import org.jetbrains.annotations.ApiStatus
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 /**
  * Implemented by other Rebar interfaces that may be affected by cooldowns.
  */
-@ApiStatus.Internal
-sealed interface RebarCooldownable {
+interface RebarCooldownableItem {
+
+    val stack: ItemStack
+
     @Suppress("INAPPLICABLE_JVM_NAME") // tfw suppressing errors
     @get:JvmName("respectCooldown")
     val respectCooldown: Boolean
         get() = true
+
+    fun hasCooldown(player: Player) = respectCooldown && player.getCooldown(stack) > 0
+
 }

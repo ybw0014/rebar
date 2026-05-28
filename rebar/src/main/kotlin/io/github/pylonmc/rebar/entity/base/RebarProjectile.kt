@@ -10,7 +10,7 @@ import org.bukkit.event.entity.ProjectileHitEvent
 import org.jetbrains.annotations.ApiStatus
 
 interface RebarProjectile {
-    fun onHit(event: ProjectileHitEvent, priority: EventPriority) {}
+    fun onProjectileHit(event: ProjectileHitEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
     companion object : MultiListener {
@@ -19,7 +19,7 @@ interface RebarProjectile {
             val rebarEntity = EntityStorage.get(event.entity)
             if (rebarEntity is RebarProjectile) {
                 try {
-                    MultiHandlers.handleEvent(rebarEntity, "onHit", event, priority)
+                    MultiHandlers.handleEvent(rebarEntity, "onProjectileHit", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarEntity)
                 }

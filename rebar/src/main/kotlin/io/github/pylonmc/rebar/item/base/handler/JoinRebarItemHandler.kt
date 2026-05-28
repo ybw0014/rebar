@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.ApiStatus
 /**
  * Allows items to run code when a player joins.
  */
-interface RebarJoinHandler {
+interface JoinRebarItemHandler {
 
     /**
      * Called when the player joins the server
@@ -24,7 +24,7 @@ interface RebarJoinHandler {
         @UniversalHandler
         fun onJoin(event: PlayerJoinEvent, priority: EventPriority) {
             for (item in event.player.inventory) {
-                val rebarItem = RebarItem.fromStack(item, RebarJoinHandler::class.java)
+                val rebarItem = RebarItem.fromStack(item, JoinRebarItemHandler::class.java)
                 val joinHandler = rebarItem as? RebarItem ?: return
                 try {
                     MultiHandlers.handleEvent(joinHandler, "onJoin", event, priority)

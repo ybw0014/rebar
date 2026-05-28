@@ -1,4 +1,4 @@
-package io.github.pylonmc.rebar.item.base
+package io.github.pylonmc.rebar.item.base.handler
 
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
@@ -9,20 +9,20 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.LingeringPotionSplashEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface RebarLingeringPotion {
+interface LingeringPotionRebarItemHandler : ProjectileRebarItemHandler {
     /**
      * Called when the potion hits the ground and 'splashes.'
      */
-    fun onSplash(event: LingeringPotionSplashEvent, priority: EventPriority)
+    fun onLingeringPotionSplash(event: LingeringPotionSplashEvent, priority: EventPriority)
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun handle(event: LingeringPotionSplashEvent, priority: EventPriority) {
-            val rebarPotion = RebarItem.fromStack(event.entity.item, RebarLingeringPotion::class.java)
+        private fun onLingeringPotionSplash(event: LingeringPotionSplashEvent, priority: EventPriority) {
+            val rebarPotion = RebarItem.fromStack(event.entity.item, LingeringPotionRebarItemHandler::class.java)
             if (rebarPotion is RebarItem) {
                 try {
-                    MultiHandlers.handleEvent(rebarPotion, "onSplash", event, priority)
+                    MultiHandlers.handleEvent(rebarPotion, "onLingeringPotionSplash", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarPotion)
                 }

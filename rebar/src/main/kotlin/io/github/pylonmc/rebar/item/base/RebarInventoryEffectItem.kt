@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitTask
 import org.jetbrains.annotations.MustBeInvokedByOverriders
 import java.util.UUID
 
-interface RebarInventoryEffectItem : RebarInventoryTicker {
+interface RebarInventoryEffectItem : RebarInventoryTickerItem {
     @MustBeInvokedByOverriders
     override fun onTick(player: Player) {
         tasks.putIfAbsent(itemKey, HashMap())
