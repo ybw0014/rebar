@@ -9,42 +9,7 @@ import io.github.pylonmc.rebar.async.PlayerScope
 import io.github.pylonmc.rebar.block.*
 import io.github.pylonmc.rebar.block.base.*
 import io.github.pylonmc.rebar.block.base.handler.FallingRebarBlockHandler.RebarFallingBlockEntity
-import io.github.pylonmc.rebar.block.base.handler.BeaconRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.BellRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.BrewingStandRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.CampfireRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.CargoRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.CauldronRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.ComposterRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.CopperRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.CrafterRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.DispenserRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.EnchantingTableRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.EntityChangeRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.FallingRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.FireRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.FlowerPotRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.FurnaceRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.GrowableRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.HopperRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.InteractableRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.JobRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.JumpRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.LeafRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.LecternRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.LootDispenserRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.NoteRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.PistonRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.RedstoneRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.ShearableRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.SignRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.SneakRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.SpongeRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.TNTRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.TargetRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.UnloadRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.VanillaInventoryRebarBlockHandler
-import io.github.pylonmc.rebar.block.base.handler.VaultRebarBlockHandler
+import io.github.pylonmc.rebar.block.base.handler.*
 import io.github.pylonmc.rebar.command.ROOT_COMMAND
 import io.github.pylonmc.rebar.command.ROOT_COMMAND_RE_ALIAS
 import io.github.pylonmc.rebar.config.Config
@@ -60,37 +25,7 @@ import io.github.pylonmc.rebar.entity.EntityListener
 import io.github.pylonmc.rebar.entity.EntityStorage
 import io.github.pylonmc.rebar.entity.RebarEntity
 import io.github.pylonmc.rebar.entity.base.*
-import io.github.pylonmc.rebar.entity.base.handler.BatRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.BreakDoorRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.BreedableRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.CombustibleRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.CreeperRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.DamageRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.DeathRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.DragonFireballRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.DyeableRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.EnderDragonRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.EndermanRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.ExperienceOrbRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.ExplosiveRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.FireworkRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.InteractableRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.ItemRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.LeashableRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.MountableRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.MoveRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.PassengerRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.PathfindRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.PiglinRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.ProjectileRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.ResurrectRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.SlimeRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.SpellcasterRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.TameableRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.TurtleRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.VillagerRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.WitchRebarEntityHandler
-import io.github.pylonmc.rebar.entity.base.handler.ZombifiedPiglinRebarEntityHandler
+import io.github.pylonmc.rebar.entity.base.handler.*
 import io.github.pylonmc.rebar.event.RebarConfigurableRecipesLoadedEvent
 import io.github.pylonmc.rebar.fluid.placement.FluidPipePlacementService
 import io.github.pylonmc.rebar.guide.pages.base.PagedGuidePage
@@ -109,27 +44,7 @@ import io.github.pylonmc.rebar.recipe.RecipeCompletion
 import io.github.pylonmc.rebar.recipe.RecipeType
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.delayTicks
-import io.github.pylonmc.rebar.item.base.handler.AnvilUseRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.ArrowRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.BlockBreakRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.BlockInteractRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.BottleRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.BowRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.BrewingStandFuelRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.BucketRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.ConsumableRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.DispenseRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.DropRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.DurabilityRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.EntityAttackRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.EntityInteractRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.FurnaceBurnRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.InteractableRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.JoinRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.LingeringPotionRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.PickupRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.ProjectileRebarItemHandler
-import io.github.pylonmc.rebar.item.base.handler.SplashPotionRebarItemHandler
+import io.github.pylonmc.rebar.item.base.handler.*
 import io.github.pylonmc.rebar.util.mergeGlobalConfig
 import io.github.pylonmc.rebar.waila.Waila
 import io.github.pylonmc.rebar.waila.WailaPlaceholders
@@ -205,78 +120,89 @@ object Rebar : JavaPlugin(), RebarAddon {
 
         // Anything that listens for addon registration must be above this line
         registerWithRebar()
-        pm.registerEvents(RebarItemListener, this)
-        pm.registerEvents(BlockStorage, this)
-        pm.registerEvents(MultiblockCache, this)
-        pm.registerEvents(EntityStorage, this)
-        pm.registerEvents(Research, this)
-        pm.registerEvents(VirtualInventoryRebarBlock, this)
-        pm.registerEvents(GuiRebarBlock, this)
-        pm.registerEvents(EntityHolderRebarBlock, this)
-        pm.registerEvents(SimpleRebarMultiblock, this)
-        pm.registerEvents(ProcessorRebarBlock, this)
-        pm.registerEvents(RecipeProcessorRebarBlock, this)
-        pm.registerEvents(FluidBufferRebarBlock, this)
-        pm.registerEvents(FluidTankRebarBlock, this)
-        pm.registerEvents(RebarRecipeListener, this)
-        pm.registerEvents(DirectionalRebarBlock, this)
-        pm.registerEvents(FluidPipePlacementService, this)
-        pm.registerEvents(TickingRebarBlock, this)
-        pm.registerEvents(RebarGuide, this)
-        pm.registerEvents(LogisticRebarBlock, this)
-        pm.registerEvents(CargoRoutes, this)
-        pm.registerEvents(CargoDuct, this)
-        pm.registerEvents(RecipeCompletion, this)
-        pm.registerEvents(PagedGuidePage, this)
-        pm.registerEvents(TabbedGuidePage, this)
-        pm.registerEvents(TickingRebarEntity, this)
+
         pm.registerEvents(ChunkScope, this)
         pm.registerEvents(PlayerScope, this)
+
+        pm.registerEvents(EntityStorage, this)
+        pm.registerEvents(BlockStorage, this)
+        pm.registerEvents(MultiblockCache, this)
+
+        pm.registerEvents(RebarItemListener, this)
+        pm.registerEvents(RebarRecipeListener, this)
+        pm.registerEvents(RecipeCompletion, this)
         pm.registerEvents(CreativeActionTranslationHandler, this)
+        pm.registerEvents(Research, this)
+
+        EntityListener.register(this, pm)
+        BlockListener.register(this, pm)
+
+        pm.registerEvents(RebarGuide, this)
+        pm.registerEvents(PagedGuidePage, this)
+        pm.registerEvents(TabbedGuidePage, this)
+
+        pm.registerEvents(FluidPipePlacementService, this)
+
+        pm.registerEvents(CargoRoutes, this)
+        pm.registerEvents(CargoDuct, this)
+
         ConfettiCreeperListener.register(this, pm)
 
         // Rebar Blocks
         pm.registerEvents(CargoRebarBlock, this)
+        pm.registerEvents(DirectionalRebarBlock, this)
+        pm.registerEvents(EntityHolderRebarBlock, this)
+        pm.registerEvents(FluidBufferRebarBlock, this)
+        pm.registerEvents(FluidTankRebarBlock, this)
+        pm.registerEvents(GhostBlockHolderRebarBlock, this)
+        pm.registerEvents(GuiRebarBlock, this)
+        pm.registerEvents(LogisticRebarBlock, this)
+        pm.registerEvents(ProcessorRebarBlock, this)
+        pm.registerEvents(RecipeProcessorRebarBlock, this)
+        pm.registerEvents(SimpleRebarMultiblock, this)
+        pm.registerEvents(TickingRebarBlock, this)
+        pm.registerEvents(VirtualInventoryRebarBlock, this)
         pm.registerEvents(FallingRebarBlockHandler, this)
-        BlockListener.register(this, pm)
         BeaconRebarBlockHandler.register(this, pm)
         BellRebarBlockHandler.register(this, pm)
-        TNTRebarBlockHandler.register(this, pm)
-        NoteRebarBlockHandler.register(this, pm)
-        CrafterRebarBlockHandler.register(this, pm)
-        SpongeRebarBlockHandler.register(this, pm)
-        FurnaceRebarBlockHandler.register(this, pm)
-        CampfireRebarBlockHandler.register(this, pm)
         BrewingStandRebarBlockHandler.register(this, pm)
-        DispenserRebarBlockHandler.register(this, pm)
-        GrowableRebarBlockHandler.register(this, pm)
+        CampfireRebarBlockHandler.register(this, pm)
+        CargoRebarBlockHandler.register(this, pm)
         CauldronRebarBlockHandler.register(this, pm)
-        SignRebarBlockHandler.register(this, pm)
-        VaultRebarBlockHandler.register(this, pm)
-        LeafRebarBlockHandler.register(this, pm)
-        TargetRebarBlockHandler.register(this, pm)
         ComposterRebarBlockHandler.register(this, pm)
-        ShearableRebarBlockHandler.register(this, pm)
-        LecternRebarBlockHandler.register(this, pm)
-        PistonRebarBlockHandler.register(this, pm)
+        CopperRebarBlockHandler.register(this, pm)
+        CrafterRebarBlockHandler.register(this, pm)
+        DispenserRebarBlockHandler.register(this, pm)
         EnchantingTableRebarBlockHandler.register(this, pm)
-        RedstoneRebarBlockHandler.register(this, pm)
+        EntityChangeRebarBlockHandler.register(this, pm)
+        FireRebarBlockHandler.register(this, pm)
+        FlowerPotRebarBlockHandler.register(this, pm)
+        FurnaceRebarBlockHandler.register(this, pm)
+        GrowableRebarBlockHandler.register(this, pm)
+        HopperRebarBlockHandler.register(this, pm)
         InteractableRebarBlockHandler.register(this, pm)
-        SneakRebarBlockHandler.register(this, pm)
         JobRebarBlockHandler.register(this, pm)
         JumpRebarBlockHandler.register(this, pm)
-        UnloadRebarBlockHandler.register(this, pm)
-        FlowerPotRebarBlockHandler.register(this, pm)
-        VanillaInventoryRebarBlockHandler.register(this, pm)
-        HopperRebarBlockHandler.register(this, pm)
-        FireRebarBlockHandler.register(this, pm)
-        CargoRebarBlockHandler.register(this, pm)
-        CopperRebarBlockHandler.register(this, pm)
-        EntityChangeRebarBlockHandler.register(this, pm)
+        LeafRebarBlockHandler.register(this, pm)
+        LecternRebarBlockHandler.register(this, pm)
         LootDispenserRebarBlockHandler.register(this, pm)
+        NoteRebarBlockHandler.register(this, pm)
+        PistonRebarBlockHandler.register(this, pm)
+        RedstoneRebarBlockHandler.register(this, pm)
+        ShearableRebarBlockHandler.register(this, pm)
+        SignRebarBlockHandler.register(this, pm)
+        SneakRebarBlockHandler.register(this, pm)
+        SpongeRebarBlockHandler.register(this, pm)
+        TargetRebarBlockHandler.register(this, pm)
+        TNTRebarBlockHandler.register(this, pm)
+        UnloadRebarBlockHandler.register(this, pm)
+        VanillaInventoryRebarBlockHandler.register(this, pm)
+        VaultRebarBlockHandler.register(this, pm)
 
         // Rebar Items
+        AnvilUseRebarItemHandler.register(this, pm)
         ArrowRebarItemHandler.register(this, pm)
+        BlockBreakRebarItemHandler.register(this, pm)
         BlockInteractRebarItemHandler.register(this, pm)
         BottleRebarItemHandler.register(this, pm)
         BowRebarItemHandler.register(this, pm)
@@ -284,26 +210,24 @@ object Rebar : JavaPlugin(), RebarAddon {
         BucketRebarItemHandler.register(this, pm)
         ConsumableRebarItemHandler.register(this, pm)
         DispenseRebarItemHandler.register(this, pm)
-        InteractableRebarItemHandler.register(this, pm)
+        DropRebarItemHandler.register(this, pm)
         DurabilityRebarItemHandler.register(this, pm)
+        EntityAttackRebarItemHandler.register(this, pm)
         EntityInteractRebarItemHandler.register(this, pm)
+        FurnaceBurnRebarItemHandler.register(this, pm)
+        InteractableRebarItemHandler.register(this, pm)
         JoinRebarItemHandler.register(this, pm)
         LingeringPotionRebarItemHandler.register(this, pm)
+        PickupRebarItemHandler.register(this, pm)
         ProjectileRebarItemHandler.register(this, pm)
         SplashPotionRebarItemHandler.register(this, pm)
-        BlockBreakRebarItemHandler.register(this, pm)
-        EntityAttackRebarItemHandler.register(this, pm)
-        AnvilUseRebarItemHandler.register(this, pm)
-        FurnaceBurnRebarItemHandler.register(this, pm)
-        PickupRebarItemHandler.register(this, pm)
-        DropRebarItemHandler.register(this, pm)
 
         // Rebar Entities
-        EntityListener.register(this, pm)
+        pm.registerEvents(TickingRebarEntity, this)
         BatRebarEntityHandler.register(this, pm)
+        BreakDoorRebarEntityHandler.register(this, pm)
         BreedableRebarEntityHandler.register(this, pm)
         CombustibleRebarEntityHandler.register(this, pm)
-        BreakDoorRebarEntityHandler.register(this, pm)
         CreeperRebarEntityHandler.register(this, pm)
         DamageRebarEntityHandler.register(this, pm)
         DeathRebarEntityHandler.register(this, pm)
@@ -318,8 +242,8 @@ object Rebar : JavaPlugin(), RebarAddon {
         ItemRebarEntityHandler.register(this, pm)
         LeashableRebarEntityHandler.register(this, pm)
         MountableRebarEntityHandler.register(this, pm)
-        PassengerRebarEntityHandler.register(this, pm)
         MoveRebarEntityHandler.register(this, pm)
+        PassengerRebarEntityHandler.register(this, pm)
         PathfindRebarEntityHandler.register(this, pm)
         PiglinRebarEntityHandler.register(this, pm)
         ProjectileRebarEntityHandler.register(this, pm)
@@ -327,7 +251,9 @@ object Rebar : JavaPlugin(), RebarAddon {
         SlimeRebarEntityHandler.register(this, pm)
         SpellcasterRebarEntityHandler.register(this, pm)
         TameableRebarEntityHandler.register(this, pm)
+        TargeterRebarEntityHandler.register(this, pm)
         TurtleRebarEntityHandler.register(this, pm)
+        UnloadRebarEntityHandler.register(this, pm)
         VillagerRebarEntityHandler.register(this, pm)
         WitchRebarEntityHandler.register(this, pm)
         ZombifiedPiglinRebarEntityHandler.register(this, pm)
