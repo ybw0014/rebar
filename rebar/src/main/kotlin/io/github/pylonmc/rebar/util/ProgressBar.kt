@@ -54,28 +54,49 @@ class ProgressBar : ComponentLike {
 
         @JvmStatic
         fun recipeProgress(progress: Double) = ProgressBar()
-            .barColor(NamedTextColor.WHITE)
+            .barColor(TextColor.fromHexString("#cccccc")!!)
             .proportion(progress)
             .suffix(Component.text(" ")
                 .append(UnitFormat.PERCENT.format(progress * 100).decimalPlaces(0))
             )
 
         @JvmStatic
+        fun timeRemaining(totalTimeSeconds: Double, remainingTimeSeconds: Double) = ProgressBar()
+            .barColor(TextColor.fromHexString("#ccafc8")!!)
+            .proportion(remainingTimeSeconds / totalTimeSeconds)
+            .suffix(Component.text(" ")
+                .append(UnitFormat.SECONDS.format(remainingTimeSeconds))
+            )
+
+        @JvmStatic
         fun fuelRemaining(total: Double, remaining: Double) = ProgressBar()
-            .barColor(TextColor.fromHexString("#f9802f")!!)
+            .barColor(TextColor.fromHexString("#e4b09f")!!)
             .proportion(remaining / total)
             .suffix(Component.text(" ")
                 .append(UnitFormat.SECONDS.format(remaining))
             )
 
         @JvmStatic
-        fun fluidContents(fluid: RebarFluid, capacity: Double, amount: Double) = ProgressBar()
-            .barColor(fluid)
+        fun fluidContents(fluid: RebarFluid?, capacity: Double, amount: Double) = ProgressBar()
+            .barColor(fluid?.color ?: NamedTextColor.BLACK)
             .proportion(amount / capacity)
             .suffix(Component.text(" ")
                 .append(Component.text(amount.roundToInt()))
                 .append(Component.text("/"))
                 .append(UnitFormat.MILLIBUCKETS.format(capacity))
+            )
+
+        @JvmStatic
+        fun fluidContentsWithName(fluid: RebarFluid?, capacity: Double, amount: Double) = ProgressBar()
+            .barColor(fluid?.color ?: NamedTextColor.BLACK)
+            .proportion(amount / capacity)
+            .suffix(Component.text(" ")
+                .append(Component.text(amount.roundToInt()))
+                .append(Component.text("/"))
+                .append(UnitFormat.MILLIBUCKETS.format(capacity))
+                .append(Component.text(" ("))
+                .append(fluid?.name ?: Component.translatable("rebar.fluid.none"))
+                .append(Component.text(")"))
             )
     }
 }
