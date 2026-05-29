@@ -25,6 +25,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.Pose
 import net.minecraft.world.item.ItemDisplayContext
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Color
@@ -49,7 +50,6 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
     override val viewers: MutableSet<UUID> = mutableSetOf()
 
     override var isSpawned: Boolean = false
-    var wasUpdated: Boolean = false
 
     private val entityData: SynchedEntityData
 
@@ -76,6 +76,9 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
      * This is needed so that the scaling of non-full blocks (like slabs) scales around the correct point to combat z-fighting.
      */
     private var centerTranslation: Vector3f
+
+    var lastState: BlockState
+    var stateWasUpdated: Boolean = false
 
     constructor(block: RebarBlock) {
         this.block = block
@@ -113,6 +116,7 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
         }.build()
         this.refreshDataValues = entityData.packAll().filter { it.id == EntityDataAccess.DISPLAY_DATA_TRANSLATION_ID.id || it.id == EntityDataAccess.DISPLAY_DATA_LEFT_ROTATION_ID.id || it.id == EntityDataAccess.DISPLAY_DATA_SCALE_ID.id || it.id == EntityDataAccess.DISPLAY_DATA_RIGHT_ROTATION_ID.id  }
         this.itemUpdateDataValue = entityData.getItem(EntityDataAccess.ITEM_DISPLAY_DATA_ITEM_STACK_ID)
+        this.lastState = (block.block as CraftBlock).blockState
         this.centerTranslation = calculateCenterTranslation()
     }
 
@@ -192,18 +196,14 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
 
     private fun calculateCenterTranslation(): Vector3f {
         val block = (this.block.block as CraftBlock)
-        val shape = block.blockState.getShape(block.level, block.position)
+        val shape = lastState.getShape(block.level, block.position)
         if (shape.isEmpty) return ZERO_VECTOR
-
-        val blockX = block.x
-        val blockY = block.y
-        val blockZ = block.z
 
         val center = shape.bounds().center
         return Vector3f(
-            (center.x + blockX - 0.5).toFloat(),
-            (center.y + blockY - 0.5).toFloat(),
-            (center.z + blockZ - 0.5).toFloat()
+            (center.x - 0.5).toFloat(),
+            (center.y - 0.5).toFloat(),
+            (center.z - 0.5).toFloat()
         )
     }
 
@@ -290,14 +290,18 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
     }
 
     fun updateStateIfNot(): Boolean {
-        if (!wasUpdated) {
+        if (!stateWasUpdated) {
+            val newState = (block.block as CraftBlock).blockState
+            if (newState === lastState) return false
+            lastState = newState
+
             block.refreshBlockTextureItem()
-            wasUpdated = itemUpdateDataValue.isDirty
-            if (wasUpdated) {
+            stateWasUpdated = itemUpdateDataValue.isDirty
+            if (stateWasUpdated) {
                 centerTranslation = calculateCenterTranslation()
             }
         }
-        return wasUpdated
+        return stateWasUpdated
     }
 
     companion object {
@@ -314,8 +318,8 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
                         val entity = block.blockTextureEntity as? BlockTextureEntityImpl ?: continue
                         if (entity.viewers.isEmpty()) continue
 
-                        if (entity.wasUpdated) {
-                            entity.wasUpdated = false
+                        if (entity.stateWasUpdated) {
+                            entity.stateWasUpdated = false
                         }
 
                         val trackedData = entity.entityData.packDirty() ?: continue
