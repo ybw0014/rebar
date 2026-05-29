@@ -12,7 +12,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface InteractableRebarItemHandler : CooldownRebarItem {
+interface InteractRebarItemHandler : CooldownRebarItem {
     /**
      * Called when a player clicks with the item in either main or off hand.
      */
@@ -23,7 +23,7 @@ interface InteractableRebarItemHandler : CooldownRebarItem {
         @UniversalHandler
         private fun onInteract(event: PlayerInteractEvent, priority: EventPriority) {
             val player = event.player
-            val rebarItem = event.item?.let { RebarItem.fromStack(it, InteractableRebarItemHandler::class.java) } ?: return
+            val rebarItem = event.item?.let { RebarItem.fromStack(it, InteractRebarItemHandler::class.java) } ?: return
             if (rebarItem !is RebarItem) return
 
             if (!player.canUse(rebarItem, false) || rebarItem.hasCooldown(player)) {

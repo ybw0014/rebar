@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDismountEvent
 import org.bukkit.event.entity.EntityMountEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface MountableRebarEntityHandler {
+interface MountRebarEntityHandler {
     fun onMounted(event: EntityMountEvent, priority: EventPriority) {}
     fun onDismounted(event: EntityDismountEvent, priority: EventPriority) {}
 
@@ -19,7 +19,7 @@ interface MountableRebarEntityHandler {
         @UniversalHandler
         private fun onMounted(event: EntityMountEvent, priority: EventPriority) {
             val mount = EntityStorage.get(event.mount)
-            if (mount is MountableRebarEntityHandler) {
+            if (mount is MountRebarEntityHandler) {
                 try {
                     MultiHandlers.handleEvent(mount, "onMounted", event, priority)
                 } catch (e: Exception) {
@@ -31,7 +31,7 @@ interface MountableRebarEntityHandler {
         @UniversalHandler
         private fun onDismounted(event: EntityDismountEvent, priority: EventPriority) {
             val mount = EntityStorage.get(event.dismounted)
-            if (mount is MountableRebarEntityHandler) {
+            if (mount is MountRebarEntityHandler) {
                 try {
                     MultiHandlers.handleEvent(mount, "onDismounted", event, priority)
                 } catch (e: Exception) {

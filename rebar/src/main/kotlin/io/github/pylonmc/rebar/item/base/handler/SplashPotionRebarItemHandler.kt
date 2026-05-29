@@ -9,7 +9,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.PotionSplashEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface SplashPotionRebarItemHandler : ProjectileRebarItemHandler {
+interface SplashPotionRebarItemHandler : io.github.pylonmc.rebar.item.base.handler.ProjectileRebarItemHandler {
     /**
      * Called when the potion hits the ground and 'splashes.'
      */

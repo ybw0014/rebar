@@ -11,7 +11,7 @@ import org.bukkit.event.block.BlockFertilizeEvent
 import org.bukkit.event.block.BlockGrowEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface GrowableRebarBlockHandler {
+interface GrowRebarBlockHandler {
     fun onGrow(event: BlockGrowEvent, priority: EventPriority) {}
     fun onFertilize(event: BlockFertilizeEvent, priority: EventPriority) {}
 
@@ -20,7 +20,7 @@ interface GrowableRebarBlockHandler {
         @UniversalHandler
         private fun onBlockGrow(event: BlockGrowEvent, priority: EventPriority) {
             val rebarBlock = BlockStorage.get(event.block)
-            if (rebarBlock is GrowableRebarBlockHandler) {
+            if (rebarBlock is GrowRebarBlockHandler) {
                 try {
                     MultiHandlers.handleEvent(rebarBlock, "onGrow", event, priority)
                 } catch (e: Exception) {
@@ -32,7 +32,7 @@ interface GrowableRebarBlockHandler {
         @UniversalHandler
         private fun onBlockFertilize(event: BlockFertilizeEvent, priority: EventPriority) {
             val rebarBlock = BlockStorage.get(event.block)
-            if (rebarBlock is GrowableRebarBlockHandler) {
+            if (rebarBlock is GrowRebarBlockHandler) {
                 try {
                     MultiHandlers.handleEvent(rebarBlock, "onFertilize", event, priority)
                 } catch (e: Exception) {

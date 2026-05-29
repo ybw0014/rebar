@@ -9,7 +9,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.ExpBottleEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface BottleRebarItemHandler : ProjectileRebarItemHandler {
+interface BottleRebarItemHandler : io.github.pylonmc.rebar.item.base.handler.ProjectileRebarItemHandler {
     fun onBottleBreak(event: ExpBottleEvent)
 
     @ApiStatus.Internal

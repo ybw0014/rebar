@@ -8,7 +8,7 @@ import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityTargetEvent
 
-interface TargeterRebarEntityHandler {
+interface TargetEntityRebarEntityHandler {
     fun onTargetEntity(event: EntityTargetEvent, priority: EventPriority) {}
 
     companion object : MultiListener {

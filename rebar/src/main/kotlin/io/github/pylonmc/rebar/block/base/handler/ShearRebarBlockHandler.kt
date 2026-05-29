@@ -13,7 +13,7 @@ import org.jetbrains.annotations.ApiStatus
 /**
  * Called when the player *right clicks* a block with shears - such as a pumpkin to turn it into a carved pumpkin.
  */
-interface ShearableRebarBlockHandler {
+interface ShearRebarBlockHandler {
     fun onSheared(event: PlayerShearBlockEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
@@ -21,7 +21,7 @@ interface ShearableRebarBlockHandler {
         @UniversalHandler
         private fun onSheared(event: PlayerShearBlockEvent, priority: EventPriority) {
             val rebarBlock = BlockStorage.get(event.block)
-            if (rebarBlock is ShearableRebarBlockHandler) {
+            if (rebarBlock is ShearRebarBlockHandler) {
                 try {
                     MultiHandlers.handleEvent(rebarBlock, "onSheared", event, priority)
                 } catch (e: Exception) {

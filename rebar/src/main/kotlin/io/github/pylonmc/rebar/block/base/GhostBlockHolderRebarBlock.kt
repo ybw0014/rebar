@@ -5,7 +5,7 @@ import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.entity.EntityStorage
 import io.github.pylonmc.rebar.entity.RebarEntity
-import io.github.pylonmc.rebar.entity.base.handler.InteractableRebarEntityHandler
+import io.github.pylonmc.rebar.entity.base.handler.InteractRebarEntityHandler
 import io.github.pylonmc.rebar.entity.display.BlockDisplayBuilder
 import io.github.pylonmc.rebar.entity.display.InteractionBuilder
 import io.github.pylonmc.rebar.entity.display.ItemDisplayBuilder
@@ -57,7 +57,7 @@ import java.util.*
  */
 interface GhostBlockHolderRebarBlock : EntityHolderRebarBlock {
 
-    class GhostBlockHitbox : RebarEntity<Interaction>, InteractableRebarEntityHandler {
+    class GhostBlockHitbox : RebarEntity<Interaction>, InteractRebarEntityHandler {
         val rebarGhostBlockId: UUID?
         val vanillaGhostBlockId: UUID?
         var activeGhostBlockId: UUID? = null
@@ -83,7 +83,7 @@ interface GhostBlockHolderRebarBlock : EntityHolderRebarBlock {
         }
 
         @MultiHandler(priorities = [ EventPriority.MONITOR ], ignoreCancelled = true)
-        override fun onInteract(event: PlayerInteractEntityEvent, priority: EventPriority) {
+        override fun onInteractedWith(event: PlayerInteractEntityEvent, priority: EventPriority) {
             if (System.currentTimeMillis() - lastInteract < 1000 || activeGhostBlockId == null) {
                 return
             }

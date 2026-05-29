@@ -6,27 +6,24 @@ import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
 import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.entity.EntityCombustEvent
-import org.bukkit.event.entity.EntityCombustByBlockEvent
-import org.bukkit.event.entity.EntityCombustByEntityEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface CombustibleRebarEntityHandler {
+interface InteractRebarEntityHandler {
+
     /**
-     * Called when this entity is set on fire
-     *
-     * Note: [event] could be [EntityCombustByBlockEvent] or [EntityCombustByEntityEvent]
+     * This may be called for both hands, so make sure you check which hand is used.
      */
-    fun onCombust(event: EntityCombustEvent, priority: EventPriority) {}
+    fun onInteractedWith(event: PlayerInteractEntityEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun onCombust(event: EntityCombustEvent, priority: EventPriority) {
-            val rebarEntity = EntityStorage.get(event.entity)
-            if (rebarEntity is CombustibleRebarEntityHandler) {
+        private fun onInteractedWith(event: PlayerInteractEntityEvent, priority: EventPriority) {
+            val rebarEntity = EntityStorage.get(event.rightClicked)
+            if (rebarEntity is InteractRebarEntityHandler) {
                 try {
-                    MultiHandlers.handleEvent(rebarEntity, "onCombust", event, priority)
+                    MultiHandlers.handleEvent(rebarEntity, "onInteractedWith", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarEntity)
                 }

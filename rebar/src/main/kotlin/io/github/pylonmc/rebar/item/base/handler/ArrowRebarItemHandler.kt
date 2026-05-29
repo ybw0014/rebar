@@ -10,7 +10,7 @@ import io.github.pylonmc.rebar.item.research.Research.Companion.canUse
 import org.bukkit.event.EventPriority
 import org.jetbrains.annotations.ApiStatus
 
-interface ArrowRebarItemHandler : ProjectileRebarItemHandler {
+interface ArrowRebarItemHandler : io.github.pylonmc.rebar.item.base.handler.ProjectileRebarItemHandler {
     /**
      * Called when this arrow is selected for a player to fire from a bow.
      */

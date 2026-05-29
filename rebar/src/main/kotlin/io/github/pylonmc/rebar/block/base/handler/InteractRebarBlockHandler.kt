@@ -10,7 +10,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface InteractableRebarBlockHandler {
+interface InteractRebarBlockHandler {
 
     /**
      * This may be called for both hands, so make sure you check which hand is used.
@@ -23,7 +23,7 @@ interface InteractableRebarBlockHandler {
         private fun onInteractedWith(event: PlayerInteractEvent, priority: EventPriority) {
             val clickedBlock = event.clickedBlock ?: return
             val rebarBlock = BlockStorage.get(clickedBlock)
-            if (rebarBlock is InteractableRebarBlockHandler) {
+            if (rebarBlock is InteractRebarBlockHandler) {
                 try {
                     MultiHandlers.handleEvent(rebarBlock, "onInteractedWith", event, priority)
                 } catch (e: Exception) {

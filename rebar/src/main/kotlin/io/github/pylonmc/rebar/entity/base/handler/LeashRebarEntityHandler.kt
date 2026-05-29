@@ -6,22 +6,22 @@ import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
 import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.entity.EntityBreedEvent
-import org.bukkit.event.entity.EntityEnterLoveModeEvent
+import org.bukkit.event.entity.EntityUnleashEvent
+import org.bukkit.event.entity.PlayerLeashEntityEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface BreedableRebarEntityHandler {
-    fun onBreed(event: EntityBreedEvent, priority: EventPriority) {}
-    fun onEnterLoveMode(event: EntityEnterLoveModeEvent, priority: EventPriority) {}
+interface LeashRebarEntityHandler {
+    fun onLeashed(event: PlayerLeashEntityEvent, priority: EventPriority) {}
+    fun onUnleashed(event: EntityUnleashEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun onBreed(event: EntityBreedEvent, priority: EventPriority) {
+        private fun onLeashed(event: PlayerLeashEntityEvent, priority: EventPriority) {
             val rebarEntity = EntityStorage.get(event.entity)
-            if (rebarEntity is BreedableRebarEntityHandler) {
+            if (rebarEntity is LeashRebarEntityHandler) {
                 try {
-                    MultiHandlers.handleEvent(rebarEntity, "onBreed", event, priority)
+                    MultiHandlers.handleEvent(rebarEntity, "onLeashed", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarEntity)
                 }
@@ -29,11 +29,11 @@ interface BreedableRebarEntityHandler {
         }
 
         @UniversalHandler
-        private fun onEnterLoveMode(event: EntityEnterLoveModeEvent, priority: EventPriority) {
+        private fun onUnleashed(event: EntityUnleashEvent, priority: EventPriority) {
             val rebarEntity = EntityStorage.get(event.entity)
-            if (rebarEntity is BreedableRebarEntityHandler) {
+            if (rebarEntity is LeashRebarEntityHandler) {
                 try {
-                    MultiHandlers.handleEvent(rebarEntity, "onEnterLoveMode", event, priority)
+                    MultiHandlers.handleEvent(rebarEntity, "onUnleashed", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarEntity)
                 }

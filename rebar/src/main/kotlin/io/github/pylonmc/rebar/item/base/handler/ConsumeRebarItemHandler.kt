@@ -10,7 +10,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface ConsumableRebarItemHandler {
+interface ConsumeRebarItemHandler {
     /**
      * Called when the item is consumed by a player.
      */
@@ -20,7 +20,7 @@ interface ConsumableRebarItemHandler {
     companion object : MultiListener {
         @UniversalHandler
         private fun onConsumed(event: PlayerItemConsumeEvent, priority: EventPriority) {
-            val rebarItem = RebarItem.fromStack(event.item, ConsumableRebarItemHandler::class.java)
+            val rebarItem = RebarItem.fromStack(event.item, ConsumeRebarItemHandler::class.java)
             if (rebarItem !is RebarItem) return
             if (!event.player.canUse(rebarItem, false)) {
                 event.isCancelled = true

@@ -5,25 +5,21 @@ import io.github.pylonmc.rebar.entity.EntityStorage
 import io.github.pylonmc.rebar.event.api.MultiListener
 import io.github.pylonmc.rebar.event.api.annotation.MultiHandlers
 import io.github.pylonmc.rebar.event.api.annotation.UniversalHandler
+import io.papermc.paper.event.entity.EntityDyeEvent
 import org.bukkit.event.EventPriority
-import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.jetbrains.annotations.ApiStatus
 
-interface InteractableRebarEntityHandler {
-
-    /**
-     * This may be called for both hands, so make sure you check which hand is used.
-     */
-    fun onInteract(event: PlayerInteractEntityEvent, priority: EventPriority) {}
+interface DyeRebarEntityHandler {
+    fun onDyed(event: EntityDyeEvent, priority: EventPriority) {}
 
     @ApiStatus.Internal
     companion object : MultiListener {
         @UniversalHandler
-        private fun onInteractEntity(event: PlayerInteractEntityEvent, priority: EventPriority) {
-            val rebarEntity = EntityStorage.get(event.rightClicked)
-            if (rebarEntity is InteractableRebarEntityHandler) {
+        private fun onDyed(event: EntityDyeEvent, priority: EventPriority) {
+            val rebarEntity = EntityStorage.get(event.entity)
+            if (rebarEntity is DyeRebarEntityHandler) {
                 try {
-                    MultiHandlers.handleEvent(rebarEntity, "onInteract", event, priority)
+                    MultiHandlers.handleEvent(rebarEntity, "onDyed", event, priority)
                 } catch (e: Exception) {
                     logEventHandleErr(event, e, rebarEntity)
                 }
