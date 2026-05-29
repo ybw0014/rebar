@@ -73,7 +73,7 @@ internal object RebarRecipeListener : Listener {
             val firstSchema = RebarItemSchema.fromStack(firstItem)
             val secondSchema = RebarItemSchema.fromStack(secondItem)
             if (firstSchema == null || secondSchema == null || firstSchema != secondSchema
-                || firstSchema.isType(RebarUnmergeableItem::class.java)
+                || firstSchema.isType(UnmergeableRebarItem::class.java)
                 || firstItem.amount != 1 || secondItem.amount != 1
                 || firstItem.hasData(DataComponentTypes.UNBREAKABLE) || secondItem.hasData(DataComponentTypes.UNBREAKABLE)
                 || !firstItem.hasData(DataComponentTypes.MAX_DAMAGE) || !secondItem.hasData(DataComponentTypes.MAX_DAMAGE)
@@ -444,7 +444,7 @@ internal object RebarRecipeListener : Listener {
             }
 
             val usingBook = secondItem.hasData(DataComponentTypes.STORED_ENCHANTMENTS)
-            if (!usingBook && (firstSchema != secondSchema || firstSchema.isType(RebarUnmergeableItem::class.java))) {
+            if (!usingBook && (firstSchema != secondSchema || firstSchema.isType(UnmergeableRebarItem::class.java))) {
                 e.result = null
             } else if (!firstItem.matchesWithoutData(resultItem, setOf(
                     DataComponentTypes.ENCHANTMENTS, DataComponentTypes.STORED_ENCHANTMENTS,
