@@ -55,7 +55,7 @@ abstract class RebarEntity<out E: Entity>(val entity: E) {
      *
      * @return the item the entity should give when middle clicked, or null if none
      */
-    open fun getPickItem(): ItemStack? = null
+    open fun getPickItem(player: Player): ItemStack? = null
 
     /**
      * Called when debug info is requested for the entity by someone
