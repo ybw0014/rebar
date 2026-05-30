@@ -8,9 +8,8 @@ import io.github.pylonmc.rebar.block.base.RebarEntityHolderBlock
 import io.github.pylonmc.rebar.block.base.RebarInventoryBlock
 import io.github.pylonmc.rebar.block.context.BlockBreakContext
 import io.github.pylonmc.rebar.block.context.BlockCreateContext
-import io.github.pylonmc.rebar.config.Config
+import io.github.pylonmc.rebar.config.ConfigSection
 import io.github.pylonmc.rebar.config.RebarConfig
-import io.github.pylonmc.rebar.config.Settings
 import io.github.pylonmc.rebar.content.debug.DebugWaxedWeatheredCutCopperStairs
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
@@ -292,9 +291,9 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
     /**
      * Returns settings associated with the block.
      *
-     * Shorthand for `Settings.get(getKey())`
+     * Shorthand for `ConfigSection.fromSettings(getKey())`
      */
-    fun getSettings(): Config = Settings.get(key)
+    fun getSettings() = ConfigSection.fromSettings(key)
 
     companion object {
 
@@ -405,5 +404,13 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
                 }
             }
         }
+
+        /**
+         * Returns settings associated with the block.
+         *
+         * Shorthand for `ConfigSection.fromSettings(key)`
+         */
+        @JvmStatic
+        fun getSettings(key: NamespacedKey) = ConfigSection.fromSettings(key)
     }
 }

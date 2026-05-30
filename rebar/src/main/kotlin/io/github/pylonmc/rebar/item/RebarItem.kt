@@ -3,9 +3,7 @@ package io.github.pylonmc.rebar.item
 import io.github.pylonmc.rebar.Rebar
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.block.context.BlockCreateContext
-import io.github.pylonmc.rebar.config.Config
-import io.github.pylonmc.rebar.config.RebarConfig
-import io.github.pylonmc.rebar.config.Settings
+import io.github.pylonmc.rebar.config.ConfigSection
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.entity.RebarEntity
 import io.github.pylonmc.rebar.i18n.RebarArgument
@@ -49,9 +47,9 @@ open class RebarItem(val stack: ItemStack) : Keyed {
     /**
      * Returns settings associated with the item.
      *
-     * Shorthand for `Settings.get(getKey())`
+     * Shorthand for `ConfigSection.fromSettings(getKey())`
      */
-    fun getSettings() = Settings.get(key)
+    fun getSettings() = ConfigSection.fromSettings(key)
 
     override fun equals(other: Any?): Boolean = key == (other as? RebarItem)?.key
 
@@ -187,8 +185,12 @@ open class RebarItem(val stack: ItemStack) : Keyed {
         fun suppressNameWarnings(key: NamespacedKey) {
             nameWarningsSuppressed.add(key)
         }
-
+        /**
+         * Returns settings associated with the item.
+         *
+         * Shorthand for `ConfigSection.fromSettings(key)`
+         */
         @JvmStatic
-        fun getSettings(key: NamespacedKey): Config = Settings.get(key)
+        fun getSettings(key: NamespacedKey) = ConfigSection.fromSettings(key)
     }
 }

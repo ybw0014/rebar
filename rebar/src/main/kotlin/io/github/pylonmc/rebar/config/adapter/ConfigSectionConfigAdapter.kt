@@ -18,6 +18,6 @@ object ConfigSectionConfigAdapter : ConfigAdapter<ConfigSection> {
             }
             memoryConfig
         }
-        return ConfigSection(section)
+        return ConfigSection.from(section)
     }
 }
