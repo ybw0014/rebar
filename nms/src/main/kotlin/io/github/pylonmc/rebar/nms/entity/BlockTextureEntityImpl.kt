@@ -42,6 +42,7 @@ import org.joml.Matrix4f
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.math.abs
 import kotlin.math.min
@@ -51,7 +52,9 @@ import net.minecraft.world.item.ItemStack as NmsItemStack
 
 class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
     override val block: RebarBlock
+    val neighborPositions: List<Long>
     override val lightDelegatePositions: List<Long>
+        get() = if (directLighting) emptyList() else neighborPositions
     override var id: Int
     override var uuid: UUID
     override val viewers: MutableSet<UUID> = mutableSetOf()
@@ -117,7 +120,7 @@ class BlockTextureEntityImpl : BlockTextureEntity, SyncedDataHolder {
 
     constructor(block: RebarBlock) {
         this.block = block
-        this.lightDelegatePositions = IMMEDIATE_FACES.map { BlockPosition.asLong(block.block.getRelative(it)) }
+        this.neighborPositions = IMMEDIATE_FACES.map { BlockPosition.asLong(block.block.getRelative(it)) }
         this.id = Bukkit.getUnsafe().nextEntityId()
         this.uuid = Mth.createInsecureUUID(Entity.SHARED_RANDOM)
         this.entityData = EntityDataAccess.fakedDataBuilder(this, NmsDisplay.ItemDisplay::class.java).apply {
