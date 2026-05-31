@@ -93,7 +93,12 @@ class ItemButton @JvmOverloads constructor(
                             RebarArgument.of("unlock_cost", UnitFormat.RESEARCH_POINTS.format(research.cost))
                         )
                     } else {
-                        Component.translatable("rebar.guide.button.item.not-researched")
+                        // Null-cost research uses a custom unlock flow defined by the addon.
+                        // Delegate to the addon's unlock-instructions key, mirroring
+                        // ResearchButton's handling of the same case.
+                        Component.translatable(
+                            "${research.key.namespace}.researches.${research.key.key}.unlock-instructions"
+                        )
                     }
 
                     val lore = builder.lore()?.lines()?.toMutableList() ?: mutableListOf()
