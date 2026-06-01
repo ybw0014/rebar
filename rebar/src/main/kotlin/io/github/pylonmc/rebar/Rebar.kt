@@ -161,6 +161,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         pm.registerEvents(VirtualInventoryRebarBlock, this)
         pm.registerEvents(FallingRebarBlockHandler, this)
         BeaconRebarBlockHandler.register(this, pm)
+        BedRebarBlockHandler.register(this, pm)
         BellRebarBlockHandler.register(this, pm)
         BrewingStandRebarBlockHandler.register(this, pm)
         CampfireRebarBlockHandler.register(this, pm)

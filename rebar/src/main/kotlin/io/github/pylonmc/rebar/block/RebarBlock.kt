@@ -166,16 +166,6 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
     }
 
     /**
-     * Schedules the block texture item to be refreshed on the next server tick.
-     * See [refreshBlockTextureItem].
-     */
-    fun scheduleBlockTextureItemRefresh() {
-        Bukkit.getScheduler().runTask(Rebar) { _ ->
-            refreshBlockTextureItem()
-        }
-    }
-
-    /**
      * Call this method to refresh the block texture entity's item to be the result of
      * [getBlockTextureItem], or a barrier if that returns null.
      */
@@ -264,7 +254,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      *
      * @return the item the block should give when middle clicked, or null if none
      */
-    open fun getPickItem() = defaultItem?.getItemStack()
+    open fun getPickItem(player: Player) = defaultItem?.getItemStack()
 
     /**
      * Called when debug info is requested for the block by someone

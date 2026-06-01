@@ -10,12 +10,14 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryView
+import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataContainer
 import org.jetbrains.annotations.ApiStatus
@@ -92,6 +94,27 @@ interface NmsAccessor {
      * For ex: If a player is spinning with a riptide trident, returns the trident, otherwise it may return the sword in the main hand
      */
     fun getWeaponItem(entity: Entity): ItemStack?
+
+    /**
+     * Identical to the [ItemFactory.createItemStack] method except it works with rebar ids
+     */
+    fun createItemStack(input: String): ItemStack
+
+    /**
+     * Notify the inventory that it has been changed, this is needed for things like Comparators and other observers
+     *
+     * Note: In the future we won't need this assuming the PR to paper is made & merged, for some reason they only
+     * call this method on item remove, and not on set.
+     */
+    fun setChanged(inventory: Inventory)
+
+    /**
+     * Simulates a player interaction using the item specified, if [block] and [blockFace] are specified it simulates using the item on
+     * that block.
+     *
+     * Note: This calls all vanilla logic, PlayerInteractEvent, BlockPlace, etc, this will **actually** use the item/block
+     */
+    fun simulateInteract(player: Player, itemStack: ItemStack, hand: EquipmentSlot, block: Block?, blockFace: BlockFace?)
 
     companion object {
         val instance = Class.forName("io.github.pylonmc.rebar.nms.NmsAccessorImpl")

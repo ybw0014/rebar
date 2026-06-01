@@ -3,6 +3,7 @@ package io.github.pylonmc.rebar.item
 import io.github.pylonmc.rebar.block.BlockStorage
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.block.context.BlockCreateContext
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.event.PreRebarBlockPlaceEvent
 import io.github.pylonmc.rebar.item.research.Research
@@ -35,6 +36,7 @@ class RebarItemSchema @JvmOverloads internal constructor(
         ?: throw IllegalArgumentException("Provided item stack is not a Rebar item; make sure you are using ItemStackBuilder.defaultBuilder to create the item stack")
 
     val addon = getAddon(key)
+    val isDisabled = key in RebarConfig.DISABLED_ITEMS
 
     /**
      * Returns the raw [template] of the [RebarItemSchema], this is the template used
