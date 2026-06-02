@@ -47,12 +47,6 @@ class WailaDisplay @JvmOverloads constructor(
         fun of(component: Component) = WailaDisplay(component)
 
         /**
-         * Constructs a new WAILA builder which begins with the name of the provided [item].
-         */
-        @JvmStatic
-        fun of(item: RebarItem) = of(Component.translatable("${item.key.namespace}.item.${item.key.key}.name"))
-
-        /**
          * Constructs a new WAILA builder which begins with the name of the provided [block] and
          * has progress equal to the break progress of the block.
          */
