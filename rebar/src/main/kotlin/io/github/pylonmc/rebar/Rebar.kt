@@ -147,6 +147,7 @@ object Rebar : JavaPlugin(), RebarAddon {
         // Rebar Blocks
         BlockListener.register(this, pm)
         RebarBeacon.register(this, pm)
+        RebarBed.register(this, pm)
         RebarBell.register(this, pm)
         RebarTNT.register(this, pm)
         RebarNoteBlock.register(this, pm)

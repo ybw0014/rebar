@@ -153,26 +153,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
         item.setData(DataComponentTypes.ITEM_MODEL, Key.key("air"))
         itemStack = item
         itemDisplayTransform = ItemDisplay.ItemDisplayTransform.FIXED
-        brightness = Display.Brightness(15, 15)
-        transformation = transformation.let {
-            Transformation(
-                it.translation,
-                it.leftRotation,
-                Vector3f(1 + BlockTextureEntity.BLOCK_OVERLAP_INCREASE),
-                it.rightRotation
-            )
-        }
         entity.spawn()
-    }
-
-    /**
-     * Schedules the block texture item to be refreshed on the next server tick.
-     * See [refreshBlockTextureItem].
-     */
-    fun scheduleBlockTextureItemRefresh() {
-        Bukkit.getScheduler().runTask(Rebar) { _ ->
-            refreshBlockTextureItem()
-        }
     }
 
     /**
@@ -264,7 +245,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      *
      * @return the item the block should give when middle clicked, or null if none
      */
-    open fun getPickItem() = defaultItem?.getItemStack()
+    open fun getPickItem(player: Player) = defaultItem?.getItemStack()
 
     /**
      * Called when debug info is requested for the block by someone
