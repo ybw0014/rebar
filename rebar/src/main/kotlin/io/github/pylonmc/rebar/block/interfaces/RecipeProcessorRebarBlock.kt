@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.jetbrains.annotations.ApiStatus
 import java.util.IdentityHashMap
+import kotlin.let
 
 /**
  * An interface that stores and progresses a recipe.
@@ -56,7 +57,11 @@ interface RecipeProcessorRebarBlock<T: RebarRecipe> {
 
     val recipeProgress: Double?
         @ApiStatus.NonExtendable
-        get() = recipeTimeTicks?.let { recipeTicksRemaining?.toDouble()?.div(it) }
+        get() = recipeTimeTicks?.let {
+            recipeTicksRemaining?.toDouble()?.div(it)
+        }?.let {
+            1.0 - it
+        }
 
     val isProcessingRecipe: Boolean
         @ApiStatus.NonExtendable
