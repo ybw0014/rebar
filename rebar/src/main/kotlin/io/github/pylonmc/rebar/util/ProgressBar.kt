@@ -9,6 +9,16 @@ import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Color
 import kotlin.math.roundToInt
 
+/**
+ * Represents a progress bar, usually in the format '|||||||||| 55%' or similar. All aspects
+ * of the bar are customisable using the methods.
+ *
+ * Most of the time, you can simply call one of the static constructor methods such as [ProgressBar.fluidContents]
+ * instead of creating a new progress bar from scratch.
+ *
+ * The proportion of the progress bar must always be set (via [ProgressBar.proportion]). The static
+ * constructor methods do this already.
+ */
 class ProgressBar : ComponentLike {
 
     var proportion: Double? = null
@@ -52,6 +62,11 @@ class ProgressBar : ComponentLike {
 
     companion object {
 
+        /**
+         * Example: '||||||||||||||||---- 80%'
+         *
+         * (where | represents a filled bar and - an empty bar)
+         */
         @JvmStatic
         fun recipeProgress(progress: Double) = ProgressBar()
             .barColor(TextColor.fromHexString("#cccccc")!!)
@@ -60,6 +75,11 @@ class ProgressBar : ComponentLike {
                 .append(UnitFormat.PERCENT.format(progress * 100).decimalPlaces(0))
             )
 
+         /**
+         * Example: '||||||||||||||||---- 16s'
+         *
+         * (where | represents a filled bar and - an empty bar)
+         */
         @JvmStatic
         fun timeRemaining(totalTimeSeconds: Double, remainingTimeSeconds: Double) = ProgressBar()
             .barColor(TextColor.fromHexString("#ccafc8")!!)
@@ -68,6 +88,11 @@ class ProgressBar : ComponentLike {
                 .append(UnitFormat.SECONDS.format(remainingTimeSeconds))
             )
 
+        /**
+         * Example: '||||||||||||||||---- 16s'
+         *
+         * (where | represents a filled bar and - an empty bar)
+         */
         @JvmStatic
         fun fuelRemaining(total: Double, remaining: Double) = ProgressBar()
             .barColor(TextColor.fromHexString("#e4b09f")!!)
@@ -76,6 +101,13 @@ class ProgressBar : ComponentLike {
                 .append(UnitFormat.SECONDS.format(remaining))
             )
 
+        /**
+         * Example: '||||||||||||||||---- 80/100mB'
+         *
+         * (where | represents a filled bar and - an empty bar)
+         *
+         * Filled bars are colored according to the fluid.
+         */
         @JvmStatic
         fun fluidContents(fluid: RebarFluid?, capacity: Double, amount: Double) = ProgressBar()
             .barColor(fluid?.color ?: NamedTextColor.BLACK)
@@ -86,6 +118,13 @@ class ProgressBar : ComponentLike {
                 .append(UnitFormat.MILLIBUCKETS.format(capacity))
             )
 
+        /**
+         * Example: '||||||||||||||||---- 80/100mB (Water)'
+         *
+         * (where | represents a filled bar and - an empty bar)
+         *
+         * Filled bars are colored according to the fluid.
+         */
         @JvmStatic
         fun fluidContentsWithName(fluid: RebarFluid?, capacity: Double, amount: Double) = ProgressBar()
             .barColor(fluid?.color ?: NamedTextColor.BLACK)
