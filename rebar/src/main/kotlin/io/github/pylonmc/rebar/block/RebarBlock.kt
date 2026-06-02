@@ -8,9 +8,9 @@ import io.github.pylonmc.rebar.block.base.RebarEntityHolderBlock
 import io.github.pylonmc.rebar.block.base.RebarInventoryBlock
 import io.github.pylonmc.rebar.block.context.BlockBreakContext
 import io.github.pylonmc.rebar.block.context.BlockCreateContext
-import io.github.pylonmc.rebar.config.Config
+import io.github.pylonmc.rebar.config.ConfigSection
 import io.github.pylonmc.rebar.config.RebarConfig
-import io.github.pylonmc.rebar.config.Settings
+import io.github.pylonmc.rebar.config.adapter.ConfigAdapter
 import io.github.pylonmc.rebar.content.debug.DebugWaxedWeatheredCutCopperStairs
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
@@ -273,9 +273,33 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
     /**
      * Returns settings associated with the block.
      *
-     * Shorthand for `Settings.get(getKey())`
+     * Shorthand for `ConfigSection.fromSettings(getKey())`
      */
-    fun getSettings(): Config = Settings.get(key)
+    fun getSettings() = ConfigSection.fromSettings(key)
+
+    /**
+     * Shorthand for getSettings().get(...)
+     */
+    fun <T> getSetting(key: String, adapter: ConfigAdapter<T>)
+        = getSettings().get(key, adapter)
+
+    /**
+     * Shorthand for getSettings().get(...)
+     */
+    fun <T> getSetting(key: String, adapter: ConfigAdapter<T>, defaultValue: T)
+        = getSettings().get(key, adapter, defaultValue)
+
+    /**
+     * Shorthand for getSettings().get(...)
+     */
+    fun <T> getSetting(key: String, adapter: ConfigAdapter<T>, defaultValue: () -> T)
+        = getSettings().get(key, adapter, defaultValue)
+
+    /**
+     * Shorthand for getSettings().getOrThrow(...)
+     */
+    fun <T> getSettingOrThrow(key: String, adapter: ConfigAdapter<T>)
+        = getSettings().getOrThrow(key, adapter)
 
     companion object {
 
