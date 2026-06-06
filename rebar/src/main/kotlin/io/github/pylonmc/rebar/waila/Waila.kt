@@ -7,14 +7,17 @@ import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.datatypes.RebarSerializers
 import io.github.pylonmc.rebar.entity.EntityStorage
 import io.github.pylonmc.rebar.entity.RebarEntity
+import io.github.pylonmc.rebar.event.RebarBlockBreakEvent
+import io.github.pylonmc.rebar.event.RebarBlockUnloadEvent
 import io.github.pylonmc.rebar.event.RebarBlockWailaEvent
+import io.github.pylonmc.rebar.event.RebarEntityDeathEvent
+import io.github.pylonmc.rebar.event.RebarEntityUnloadEvent
 import io.github.pylonmc.rebar.event.RebarEntityWailaEvent
 import io.github.pylonmc.rebar.i18n.RebarArgument
 import io.github.pylonmc.rebar.util.delayTicks
 import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.github.pylonmc.rebar.util.position.position
 import io.github.pylonmc.rebar.util.rebarKey
-import io.github.pylonmc.rebar.util.vanillaDisplayName
 import io.github.pylonmc.rebar.waila.Waila.Companion.addWailaOverride
 import io.papermc.paper.raytracing.RayTraceTarget
 import kotlinx.coroutines.Job
@@ -151,7 +154,7 @@ class Waila private constructor(private val player: Player, playerConfig: Player
 
         rayTraceResult.hitEntity?.let { entity ->
             try {
-                var display = entityOverrides[entity.uniqueId]?.invoke(player)
+                var display = entityOverrides[entity.uniqueId]?.getWaila(player)
                     ?: entity.let(EntityStorage::get)?.getWaila(player)
 
                 if (display == null && player.wailaConfig.vanillaWailaEnabled) {
@@ -181,7 +184,7 @@ class Waila private constructor(private val player: Player, playerConfig: Player
 
         rayTraceResult.hitBlock?.let { block ->
             try {
-                var display = blockOverrides[block.position]?.invoke(player)
+                var display = blockOverrides[block.position]?.getWaila(player)
                     ?: block.let(BlockStorage::get)?.getWaila(player)
 
                 if (display == null && player.wailaConfig.vanillaWailaEnabled) {
@@ -216,8 +219,8 @@ class Waila private constructor(private val player: Player, playerConfig: Player
         private val wailaKey = rebarKey("waila")
         private val wailas = mutableMapOf<UUID, Waila>()
 
-        private val blockOverrides = mutableMapOf<BlockPosition, (Player) -> WailaDisplay?>()
-        private val entityOverrides = mutableMapOf<UUID, (Player) -> WailaDisplay?>()
+        private val blockOverrides = mutableMapOf<BlockPosition, WailaSupplier>()
+        private val entityOverrides = mutableMapOf<UUID, WailaSupplier>()
 
         @JvmStatic
         fun getWaila(player: Player): Waila? {
@@ -285,8 +288,8 @@ class Waila private constructor(private val player: Player, playerConfig: Player
          * old override will be replaced.
          */
         @JvmStatic
-        fun addWailaOverride(position: BlockPosition, provider: (Player) -> WailaDisplay?) {
-            blockOverrides[position] = provider
+        fun addWailaOverride(position: BlockPosition, supplier: WailaSupplier) {
+            blockOverrides[position] = supplier
         }
 
         /**
@@ -299,8 +302,8 @@ class Waila private constructor(private val player: Player, playerConfig: Player
          * old override will be replaced.
          */
         @JvmStatic
-        fun addWailaOverride(block: Block, provider: (Player) -> WailaDisplay?)
-                = addWailaOverride(block.position, provider)
+        fun addWailaOverride(block: Block, supplier: WailaSupplier)
+                = addWailaOverride(block.position, supplier)
 
         /**
          * Adds a WAILA override for the given entity. This will always show the
@@ -311,8 +314,8 @@ class Waila private constructor(private val player: Player, playerConfig: Player
          * old override will be replaced.
          */
         @JvmStatic
-        fun addWailaOverride(entity: Entity, provider: (Player) -> WailaDisplay?) {
-            entityOverrides[entity.uniqueId] = provider
+        fun addWailaOverride(entity: Entity, supplier: WailaSupplier) {
+            entityOverrides[entity.uniqueId] = supplier
         }
 
         /**
@@ -349,6 +352,31 @@ class Waila private constructor(private val player: Player, playerConfig: Player
         @EventHandler(priority = EventPriority.MONITOR)
         private fun onPlayerQuit(event: PlayerQuitEvent) {
             removePlayer(event.player)
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        private fun onBlockBreak(event: RebarBlockBreakEvent) {
+            blockOverrides.values.removeIf { supplier -> supplier is RebarBlockWailaSupplier && supplier.source == event.rebarBlock }
+            entityOverrides.values.removeIf { supplier -> supplier is RebarBlockWailaSupplier && supplier.source == event.rebarBlock }
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        private fun onBlockUnload(event: RebarBlockUnloadEvent) {
+            blockOverrides.values.removeIf { supplier -> supplier is RebarBlockWailaSupplier && supplier.source == event.rebarBlock }
+            entityOverrides.values.removeIf { supplier -> supplier is RebarBlockWailaSupplier && supplier.source == event.rebarBlock }
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        private fun onEntityRemove(event: RebarEntityDeathEvent) {
+            // TODO: this will need changed to RebarEntityRemoveEvent when my other PR is opened & merged
+            blockOverrides.values.removeIf { supplier -> supplier is RebarEntityWailaSupplier && supplier.source == event.rebarEntity }
+            entityOverrides.values.removeIf { supplier -> supplier is RebarEntityWailaSupplier && supplier.source == event.rebarEntity }
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        private fun onEntityUnload(event: RebarEntityUnloadEvent) {
+            blockOverrides.values.removeIf { supplier -> supplier is RebarEntityWailaSupplier && supplier.source == event.rebarEntity }
+            entityOverrides.values.removeIf { supplier -> supplier is RebarEntityWailaSupplier && supplier.source == event.rebarEntity }
         }
     }
 }
