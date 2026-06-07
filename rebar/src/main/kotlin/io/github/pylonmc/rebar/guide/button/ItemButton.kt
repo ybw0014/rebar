@@ -4,6 +4,7 @@ import io.github.pylonmc.rebar.guide.pages.item.ItemRecipesPage
 import io.github.pylonmc.rebar.guide.pages.item.ItemUsagesPage
 import io.github.pylonmc.rebar.guide.pages.research.ResearchItemsPage
 import io.github.pylonmc.rebar.i18n.RebarArgument
+import io.github.pylonmc.rebar.item.ItemTypeWrapper
 import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
@@ -201,6 +202,15 @@ class ItemButton @JvmOverloads constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun hasItemType(itemTypeWrapper: ItemTypeWrapper): Boolean {
+        for (stack in stacks) {
+            if (itemTypeWrapper.matches(stack)) {
+                return true
+            }
+        }
+        return false
     }
 
     companion object {

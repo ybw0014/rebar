@@ -2,8 +2,12 @@ package io.github.pylonmc.rebar.guide.pages.base
 
 import io.github.pylonmc.rebar.content.guide.RebarGuide
 import io.github.pylonmc.rebar.guide.button.GuideButton
+import io.github.pylonmc.rebar.guide.button.ItemButton
 import io.github.pylonmc.rebar.guide.button.PageButton
+import io.github.pylonmc.rebar.item.ItemTypeWrapper
+import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.util.gui.GuiItems
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes.player
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import xyz.xenondevs.invui.gui.Gui
@@ -34,6 +38,11 @@ open class SimpleDynamicGuidePage(
 ) : PagedGuidePage {
 
     override fun getKey() = key
+
+    /**
+     * How many buttons will be visible on each page
+     */
+    open val pageSize: Int = 45
 
     /**
      * Returns a page containing the header (the top row of the page) and a section
@@ -69,5 +78,23 @@ open class SimpleDynamicGuidePage(
         })
 
         return gui.build().apply { loadCurrentPage(player, this) }
+    }
+
+    open fun findPage(player: Player, itemTypeWrapper: ItemTypeWrapper): Pair<GuidePage?, Int> {
+        val buttons = buttonSupplier.get().sortedBy { if (it is GuideButton) it.priority() else 1.0 }
+        for ((index, button) in buttons.withIndex()) {
+            val pageNumber = index / pageSize
+            if (button is ItemButton && button.hasItemType(itemTypeWrapper)) {
+                return this to pageNumber
+            }
+
+            if (button !is PageButton || !button.shouldDisplay(player)) continue
+            val page = button.page as? SimpleDynamicGuidePage ?: continue
+            val foundPage = page.findPage(player, itemTypeWrapper)
+            if (foundPage.first != null) {
+                return foundPage
+            }
+        }
+        return null to 0
     }
 }
