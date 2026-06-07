@@ -2,7 +2,6 @@ package io.github.pylonmc.rebar.config
 
 import io.github.pylonmc.rebar.Rebar
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter
-import io.github.pylonmc.rebar.util.mergeResource
 import io.github.pylonmc.rebar.waila.Waila
 import net.kyori.adventure.bossbar.BossBar
 
@@ -106,10 +105,18 @@ object RebarConfig {
 
         @JvmStatic
         val ENABLED
-            get() = TICK_INTERVAL > 0 && ENABLED_TYPES.isNotEmpty()
+            get() = ENABLED_TYPES.isNotEmpty()
 
         @JvmField
-        val TICK_INTERVAL = config.getOrThrow("waila.tick-interval", ConfigAdapter.INTEGER)
+        val CONTENTS_TICK_INTERVAL = config.getOrThrow("waila.contents-tick-interval", ConfigAdapter.INTEGER)
+
+        @JvmField
+        val TARGET_TICK_INTERVAL = config.getOrThrow("waila.target-tick-interval", ConfigAdapter.INTEGER)
+
+        init {
+            check(CONTENTS_TICK_INTERVAL > 0) { "waila.content-tick-interval interval must be greater than zero" }
+            check(TARGET_TICK_INTERVAL > 0) { "waila.target-tick-interval interval must be greater than zero" }
+        }
 
         @JvmField
         val ENABLED_TYPES = config.getOrThrow("waila.enabled-types", ConfigAdapter.LIST.from(ConfigAdapter.ENUM.from(Waila.Type::class.java)))

@@ -20,6 +20,8 @@ import io.papermc.paper.adventure.PaperAdventure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.`object`.SpriteObjectContents
+import net.kyori.adventure.text.renderer.AbstractComponentRenderer
 import net.minecraft.commands.arguments.item.ItemParser
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
@@ -49,6 +51,7 @@ import org.bukkit.craftbukkit.CraftRegistry
 import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.craftbukkit.block.CraftBlock
 import org.bukkit.craftbukkit.block.CraftBlockState
+import org.bukkit.craftbukkit.block.data.CraftBlockData
 import org.bukkit.craftbukkit.entity.CraftEntity
 import org.bukkit.craftbukkit.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.entity.CraftPlayer
@@ -289,6 +292,7 @@ object NmsAccessorImpl : NmsAccessor {
                 val nmsStack = (stack as CraftItemStack).handle
                 nmsStack.applyComponents(itemInput.components)
                 return nmsStack.asBukkitMirror()
+
             }
         } catch (ex: CommandSyntaxException) {
             throw IllegalArgumentException("Could not parse ItemStack: $input", ex);

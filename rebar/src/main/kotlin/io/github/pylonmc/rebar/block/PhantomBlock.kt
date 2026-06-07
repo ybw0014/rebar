@@ -79,7 +79,7 @@ class PhantomBlock(
     }
 
     override fun getWaila(player: Player): WailaDisplay? {
-        return WailaDisplay.of(this).add(Component.text(erroredBlockKey.toString()))
+        return WailaDisplay.of(this, player).add(Component.text(erroredBlockKey.toString()))
             .color(BossBar.Color.RED)
     }
 

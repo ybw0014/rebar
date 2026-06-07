@@ -95,9 +95,6 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
 
     val defaultItem = RebarRegistry.ITEMS[schema.key]
 
-    var breakProgress = 0.0F
-        internal set
-
     /**
      * This constructor is called when a *new* block is created in the world.
      */
@@ -220,7 +217,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      * @return the WAILA configuration, or null if WAILA should not be shown for this block.
      */
     open fun getWaila(player: Player): WailaDisplay? {
-        return WailaDisplay.of(this)
+        return WailaDisplay.of(this, player)
     }
 
     /**

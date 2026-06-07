@@ -5,6 +5,7 @@ package io.github.pylonmc.rebar.util
 
 import io.github.pylonmc.rebar.Rebar
 import io.github.pylonmc.rebar.addon.RebarAddon
+import io.github.pylonmc.rebar.block.BlockListener
 import io.github.pylonmc.rebar.config.ConfigSection
 import io.github.pylonmc.rebar.config.ContributorConfig
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter
@@ -17,6 +18,7 @@ import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.position.BlockPosition
+import io.github.pylonmc.rebar.util.position.position
 import io.papermc.paper.datacomponent.DataComponentType
 import io.papermc.paper.registry.keys.tags.BlockTypeTagKeys
 import kotlinx.coroutines.Job
@@ -748,3 +750,68 @@ fun ItemStack.overriddenDataTypes(): List<DataComponentType> {
 }
 
 const val FLUID_EPSILON = 1.0e-6
+
+fun Material.getPreferredTool(): Material? {
+    if (Tag.MINEABLE_AXE.isTagged(this)) {
+        if (Tag.NEEDS_DIAMOND_TOOL.isTagged(this)) {
+            return Material.DIAMOND_AXE
+        }
+        if (Tag.NEEDS_STONE_TOOL.isTagged(this)) {
+            return Material.STONE_AXE
+        }
+        if (Tag.NEEDS_IRON_TOOL.isTagged(this)) {
+            return Material.IRON_AXE
+        }
+        return Material.WOODEN_AXE
+    }
+
+    if (Tag.MINEABLE_PICKAXE.isTagged(this)) {
+        if (Tag.NEEDS_DIAMOND_TOOL.isTagged(this)) {
+            return Material.DIAMOND_PICKAXE
+        }
+        if (Tag.NEEDS_STONE_TOOL.isTagged(this)) {
+            return Material.STONE_PICKAXE
+        }
+        if (Tag.NEEDS_IRON_TOOL.isTagged(this)) {
+            return Material.IRON_PICKAXE
+        }
+        return Material.WOODEN_PICKAXE
+    }
+
+    if (Tag.MINEABLE_SHOVEL.isTagged(this)) {
+        if (Tag.NEEDS_DIAMOND_TOOL.isTagged(this)) {
+            return Material.DIAMOND_SHOVEL
+        }
+        if (Tag.NEEDS_STONE_TOOL.isTagged(this)) {
+            return Material.STONE_SHOVEL
+        }
+        if (Tag.NEEDS_IRON_TOOL.isTagged(this)) {
+            return Material.IRON_SHOVEL
+        }
+        return Material.WOODEN_SHOVEL
+    }
+
+    if (Tag.MINEABLE_HOE.isTagged(this)) {
+        if (Tag.NEEDS_DIAMOND_TOOL.isTagged(this)) {
+            return Material.DIAMOND_HOE
+        }
+        if (Tag.NEEDS_STONE_TOOL.isTagged(this)) {
+            return Material.STONE_HOE
+        }
+        if (Tag.NEEDS_IRON_TOOL.isTagged(this)) {
+            return Material.IRON_HOE
+        }
+        return Material.WOODEN_HOE
+    }
+
+    if (Tag.SWORD_EFFICIENT.isTagged(this) || Tag.SWORD_INSTANTLY_MINES.isTagged(this)) {
+        return Material.WOODEN_SWORD
+    }
+
+    // TODO shears - tags will be added next update, we can't do this yet
+
+    return null
+}
+
+val Block.breakProgress
+    get() = BlockListener.blockBreakProgressMap[position] ?: 0.0F
