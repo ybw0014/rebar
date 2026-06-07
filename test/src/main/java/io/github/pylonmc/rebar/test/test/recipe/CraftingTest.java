@@ -51,7 +51,7 @@ public class CraftingTest extends SyncTest {
                             .addIngredient(Material.DIAMOND)
                             .addIngredient(stickyStick)
             );
-            ItemStack[] crafting = ItemStack.of[9];
+            ItemStack[] crafting = new ItemStack[9];
             Arrays.fill(crafting, nothing);
             crafting[0] = stickyStick;
             crafting[1] = diamond;
