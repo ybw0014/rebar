@@ -62,7 +62,6 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
 
     val nameTranslationKey = schema.nameTranslationKey
     val loreTranslationKey = schema.loreTranslationKey
-    val defaultWailaTranslationKey = schema.defaultWailaTranslationKey
 
     /**
      * Set this to `true` if your block should not have a [blockTextureEntity] for custom models/textures.

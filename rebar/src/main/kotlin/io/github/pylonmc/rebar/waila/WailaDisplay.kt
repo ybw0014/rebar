@@ -2,7 +2,6 @@ package io.github.pylonmc.rebar.waila
 
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.config.RebarConfig
-import io.github.pylonmc.rebar.item.RebarItem
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentLike
