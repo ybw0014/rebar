@@ -1,6 +1,8 @@
 package io.github.pylonmc.rebar.guide.button
 
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.content.guide.RebarGuide
+import io.github.pylonmc.rebar.guide.pages.base.PagedGuidePage
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
 import io.github.pylonmc.rebar.item.research.Research.Companion.guideHints
 import io.github.pylonmc.rebar.util.rebarKey
@@ -29,13 +31,17 @@ class BackButton : AbstractItem() {
 
     override fun handleClick(clickType: ClickType, player: Player, click: Click) {
         val history = RebarGuide.history.getOrPut(player.uniqueId) { mutableListOf() }
-
         if (clickType.isShiftClick) {
             history.clear()
             RebarGuide.rootPage.open(player)
         } else if (history.size >= 2) {
-            history.removeLast() // remove the current page
+            val currentPage = history.removeLast() // remove the current page & forget the page number
+            if (currentPage is PagedGuidePage) {
+                currentPage.resetCurrentPage(player)
+            }
+
             history.removeLast().open(player)
         }
+        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
     }
 }

@@ -1,5 +1,6 @@
 package io.github.pylonmc.rebar.guide.button
 
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.guide.pages.item.ItemRecipesPage
 import io.github.pylonmc.rebar.guide.pages.item.ItemUsagesPage
 import io.github.pylonmc.rebar.guide.pages.research.ResearchItemsPage
@@ -129,6 +130,7 @@ class ItemButton @JvmOverloads constructor(
                     val page = ItemRecipesPage(currentStack)
                     if (page.pages.isNotEmpty()) {
                         page.open(player)
+                        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                     }
                 }
 
@@ -147,6 +149,7 @@ class ItemButton @JvmOverloads constructor(
                                 item.item.notifyWindows()
                             }
                         }
+                        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                     }
                 }
 
@@ -154,6 +157,7 @@ class ItemButton @JvmOverloads constructor(
                     val page = ItemUsagesPage(currentStack)
                     if (page.pages.isNotEmpty()) {
                         page.open(player)
+                        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                     }
                 }
 
@@ -161,6 +165,7 @@ class ItemButton @JvmOverloads constructor(
                     val itemSchema = RebarItemSchema.fromStack(currentStack)
                     if (itemSchema != null && itemSchema.research != null && !player.canUse(itemSchema)) {
                         ResearchItemsPage(itemSchema.research!!).open(player)
+                        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                     }
                 }
 
@@ -169,6 +174,7 @@ class ItemButton @JvmOverloads constructor(
                     val stack = getCheatItemStack(currentStack, click)
                     stack.amount = stack.maxStackSize
                     player.setItemOnCursor(stack)
+                    RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                 }
 
                 ClickType.DROP -> {
@@ -177,8 +183,10 @@ class ItemButton @JvmOverloads constructor(
                     stack.amount = 1
                     if (player.itemOnCursor.isEmpty) {
                         player.setItemOnCursor(stack)
+                        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                     } else if (player.itemOnCursor.isSimilar(stack)) {
                         player.itemOnCursor.add()
+                        RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                     }
                 }
 
@@ -187,6 +195,7 @@ class ItemButton @JvmOverloads constructor(
                     val stack = getCheatItemStack(currentStack, click)
                     stack.amount = stack.maxStackSize
                     player.dropItem(stack)
+                    RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                 }
 
                 ClickType.SWAP_OFFHAND -> {
@@ -194,6 +203,7 @@ class ItemButton @JvmOverloads constructor(
                     val stack = getCheatItemStack(currentStack, click)
                     stack.amount = 1
                     player.give(stack)
+                    RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                 }
 
                 else -> {}

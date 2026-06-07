@@ -1,5 +1,6 @@
 package io.github.pylonmc.rebar.guide.button
 
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.guide.pages.research.ResearchItemsPage
 import io.github.pylonmc.rebar.i18n.RebarArgument
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
@@ -106,12 +107,15 @@ open class ResearchButton(val research: Research) : AbstractBoundItem() {
                         item.item.notifyWindows()
                     }
                 }
+                RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
             } else if (clickType.isRightClick) {
                 ResearchItemsPage(research).open(player)
+                RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
             } else if (clickType == ClickType.MIDDLE) {
                 if (player.hasPermission("rebar.command.research.modify")) {
                     research.addTo(player)
                     notifyWindows()
+                    RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                 }
             }
         } catch (e: Exception) {

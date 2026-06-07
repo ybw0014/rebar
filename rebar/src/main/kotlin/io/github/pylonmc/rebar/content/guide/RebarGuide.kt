@@ -24,6 +24,7 @@ import io.github.pylonmc.rebar.item.interfaces.InteractRebarItemHandler
 import io.github.pylonmc.rebar.item.research.Research
 import io.github.pylonmc.rebar.recipe.FluidOrItem
 import io.github.pylonmc.rebar.registry.RebarRegistry
+import io.github.pylonmc.rebar.util.findRebar
 import io.github.pylonmc.rebar.util.gui.GuiItems
 import io.github.pylonmc.rebar.util.rebarKey
 import io.papermc.paper.datacomponent.DataComponentTypes
@@ -54,6 +55,7 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), InteractRebarItemHandler 
             event.setUseInteractedBlock(Event.Result.DENY)
         } else {
             open(event.player)
+            RebarConfig.GuideConfig.OPEN_SOUND.playTo(event.player)
         }
     }
 
@@ -160,8 +162,9 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), InteractRebarItemHandler 
          */
         @EventHandler(priority = EventPriority.LOWEST)
         private fun join(event: PlayerJoinEvent) {
-            if (RebarConfig.REBAR_GUIDE_ON_FIRST_JOIN && !event.player.hasPlayedBefore()) {
-                event.player.give(STACK.clone())
+            val player = event.player
+            if (RebarConfig.GuideConfig.GIVE_ON_FIRST_JOIN && !player.hasPlayedBefore() && player.inventory.findRebar(KEY) == null) {
+                player.give(STACK.clone())
             }
         }
 

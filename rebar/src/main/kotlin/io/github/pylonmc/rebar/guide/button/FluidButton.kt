@@ -1,5 +1,6 @@
 package io.github.pylonmc.rebar.guide.button
 
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.fluid.RebarFluid
 import io.github.pylonmc.rebar.guide.pages.fluid.FluidRecipesPage
 import io.github.pylonmc.rebar.guide.pages.fluid.FluidUsagesPage
@@ -87,11 +88,13 @@ open class FluidButton(
                 val page = FluidRecipesPage(currentFluid.key)
                 if (page.pages.isNotEmpty()) {
                     page.open(player)
+                    RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                 }
             } else {
                 val page = FluidUsagesPage(currentFluid)
                 if (page.pages.isNotEmpty()) {
                     page.open(player)
+                    RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
                 }
             }
         } catch (e: Exception) {

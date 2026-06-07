@@ -2,6 +2,7 @@ package io.github.pylonmc.rebar.guide.button
 
 import io.github.pylonmc.rebar.addon.RebarAddon
 import io.github.pylonmc.rebar.config.ContributorConfig
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.i18n.RebarArgument
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
 import io.github.pylonmc.rebar.util.fromMiniMessage
@@ -35,6 +36,7 @@ class ContributorButton(val addon: RebarAddon, val contributor: ContributorConfi
         if (contributor.link != null) {
             player.sendMessage(Component.translatable("rebar.guide.button.contributor.link_message")
                 .clickEvent(ClickEvent.openUrl(contributor.link)))
+            RebarConfig.GuideConfig.CLICK_BUTTON_SOUND.playTo(player)
         }
     }
 }
