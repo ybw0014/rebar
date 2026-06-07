@@ -20,6 +20,7 @@ import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
 import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.IMMEDIATE_FACES
+import io.github.pylonmc.rebar.util.isChunkLoaded
 import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.github.pylonmc.rebar.util.position.position
 import io.github.pylonmc.rebar.util.rebarKey
@@ -28,14 +29,11 @@ import io.papermc.paper.datacomponent.DataComponentTypes
 import net.kyori.adventure.key.Key
 import org.bukkit.*
 import org.bukkit.block.Block
-import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataContainer
-import org.bukkit.util.Transformation
-import org.joml.Vector3f
 
 /**
  * Represents a Rebar block in the world.
@@ -95,6 +93,9 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
     }
 
     val defaultItem = RebarRegistry.ITEMS[schema.key]
+
+    val isChunkLoaded: Boolean
+        get() = block.isChunkLoaded
 
     /**
      * This constructor is called when a *new* block is created in the world.
