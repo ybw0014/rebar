@@ -35,26 +35,14 @@ import xyz.xenondevs.invui.item.ItemProvider
  * @param stacks The items to display. If multiple are provided, the button will automatically
  * cycle through all of them. You must supply at least one item
  */
-class ItemButton @JvmOverloads constructor(
+class ItemButton private constructor(
     stacks: List<ItemStack>,
 
     /**
      * A function to apply to the button item after creating it.
      */
-    val preDisplayDecorator: (ItemStack, Player) -> ItemStack = { stack, _ -> stack }
+    val preDisplayDecorator: Decorator = noDecorator
 ) : AbstractBoundItem() {
-
-    /**
-     * @param stacks The items to display. If multiple are provided, the button will automatically
-     * cycle through all of them. You must supply at least one item
-     */
-    constructor(vararg stacks: ItemStack) : this(stacks.toList())
-
-    /**
-     * @param stack The item to display
-     * @param preDisplayDecorator A function to apply to the button item after creating it
-     */
-    constructor(stack: ItemStack, preDisplayDecorator: (ItemStack, Player) -> ItemStack) : this(listOf(stack), preDisplayDecorator)
 
     val stacks = stacks.shuffled()
     val currentStack: ItemStack
@@ -204,6 +192,9 @@ class ItemButton @JvmOverloads constructor(
     }
 
     companion object {
+        private typealias Decorator = (ItemStack, Player) -> ItemStack
+        private val noDecorator: Decorator = { stack, _ -> stack }
+
         @Suppress("UnstableApiUsage")
         private fun getCheatItemStack(currentStack: ItemStack, click: Click): ItemStack {
             val itemSchema = RebarItemSchema.fromStack(currentStack)
@@ -225,21 +216,13 @@ class ItemButton @JvmOverloads constructor(
         }
 
         @JvmStatic
-        fun of(stack: ItemStack?): Item {
+        @JvmOverloads
+        fun of(stack: ItemStack?, preDisplayDecorator: Decorator? = null): Item {
             if (stack == null || stack.isEmpty) {
                 return EMPTY
             }
 
-            return ItemButton(stack)
-        }
-
-        @JvmStatic
-        fun of(stack: ItemStack?, preDisplayDecorator: (ItemStack, Player) -> ItemStack): Item {
-            if (stack == null || stack.isEmpty) {
-                return EMPTY
-            }
-
-            return ItemButton(listOf(stack), preDisplayDecorator)
+            return ItemButton(listOf(stack), preDisplayDecorator ?: noDecorator)
         }
 
         @JvmStatic
@@ -248,33 +231,29 @@ class ItemButton @JvmOverloads constructor(
                 return EMPTY
             }
 
-            return ItemButton(*input.representativeItems.toTypedArray())
+            return of(input.representativeItems.toList())
         }
 
         @JvmStatic
         fun of(choice: RecipeChoice?): Item = when (choice) {
-            is RecipeChoice.MaterialChoice -> ItemButton(choice.choices.map(::ItemStack))
-            is RecipeChoice.ExactChoice -> ItemButton(choice.choices)
+            is RecipeChoice.MaterialChoice -> of(choice.choices.map(ItemStack::of))
+            is RecipeChoice.ExactChoice -> of(choice.choices)
             else -> EMPTY
         }
 
         @JvmStatic @JvmOverloads
-        fun of(stacks: List<ItemStack>, preDisplayDecorator: (ItemStack, Player) -> ItemStack = { stack, _ -> stack })
-                = ItemButton(stacks, preDisplayDecorator)
-        /**
-         * @param stacks The items to display. If multiple are provided, the button will automatically
-         * cycle through all of them. You must supply at least one item
-         */
-        @JvmStatic
-        fun of(vararg stacks: ItemStack)
-                = ItemButton(stacks.toList())
+        fun of(stacks: List<ItemStack?>, preDisplayDecorator: Decorator? = null) = if (stacks.filterNotNull().isEmpty()) {
+            EMPTY
+        } else {
+            ItemButton(stacks.filterNotNull(), preDisplayDecorator ?: noDecorator)
+        }
 
         /**
-         * @param stack The item to display
-         * @param preDisplayDecorator A function to apply to the button item after creating it
+         * @param stacks The items to display. If multiple are provided, the button will automatically
+         * cycle through all of them. (if no items are provided, returns an empty item)
          */
         @JvmStatic
-        fun of(stack: ItemStack, preDisplayDecorator: (ItemStack, Player) -> ItemStack)
-                = ItemButton(stack, preDisplayDecorator)
+        @JvmOverloads
+        fun of(preDisplayDecorator: Decorator? = null, vararg stacks: ItemStack?) = of(stacks.toList(), preDisplayDecorator)
     }
 }
