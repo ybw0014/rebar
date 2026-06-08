@@ -747,4 +747,7 @@ fun ItemStack.overriddenDataTypes(): List<DataComponentType> {
     return dataTypes.filter { isDataOverridden(it) }
 }
 
+val Block.isChunkLoaded: Boolean
+    get() = world.isChunkLoaded(x shr 4, z shr 4)
+
 const val FLUID_EPSILON = 1.0e-6
