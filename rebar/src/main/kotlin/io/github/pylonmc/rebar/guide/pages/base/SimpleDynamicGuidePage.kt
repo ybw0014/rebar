@@ -2,12 +2,7 @@ package io.github.pylonmc.rebar.guide.pages.base
 
 import io.github.pylonmc.rebar.content.guide.RebarGuide
 import io.github.pylonmc.rebar.guide.button.GuideButton
-import io.github.pylonmc.rebar.guide.button.ItemButton
-import io.github.pylonmc.rebar.guide.button.PageButton
-import io.github.pylonmc.rebar.item.ItemTypeWrapper
-import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.util.gui.GuiItems
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes.player
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import xyz.xenondevs.invui.gui.Gui
