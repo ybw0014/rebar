@@ -54,7 +54,6 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
-import org.bukkit.Chunk
 import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.command.CommandSender
@@ -644,21 +643,6 @@ private val fillMultiblock = buildCommand("fillmultiblock") {
             RebarArgument.of("filled", filled),
             RebarArgument.of("total", total)
         )
-    }
-}
-
-private fun forceLoadSub(subCommand: String, operator: (player: Player, center: Chunk, x: Int, z: Int) -> Unit) = buildCommand(subCommand) {
-    argument("radius", IntegerArgumentType.integer(1)) {
-        executesWithPlayer { player ->
-            RebarMetrics.onCommandRun("/rb forceload $subCommand")
-            val radius = IntegerArgumentType.getInteger(this, "radius")
-            val center = player.location.chunk
-            for (x in -radius..radius) {
-                for (z in -radius..radius) {
-                    operator(player, center, x, z)
-                }
-            }
-        }
     }
 }
 
