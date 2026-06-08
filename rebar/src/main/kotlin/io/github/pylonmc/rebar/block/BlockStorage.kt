@@ -201,6 +201,9 @@ object BlockStorage : Listener {
         blocksBySchema[schema].orEmpty().toSet()
     }
 
+    /**
+     * Returns all the Rebar blocks whose [Class] inherits [type]
+     */
     fun <T> getByType(type: Class<T>): Collection<RebarBlock> = lockBlockRead {
         blocksBySchema.filter { it.key.isType(type) }.values.flatten()
     }
