@@ -80,7 +80,6 @@ class WailaDisplay @JvmOverloads constructor(
          */
         @JvmStatic
         fun of(block: RebarBlock, player: Player, name: Component): WailaDisplay {
-            val name = Component.translatable("${block.key.namespace}.item.${block.key.key}.name")
             val prefix = getWailaBlockPrefix(block.block, player)
             val display = if (prefix != null) {
                 of(prefix).add(name)
