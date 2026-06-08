@@ -314,6 +314,15 @@ fun fromMiniMessage(string: String): Component = customMiniMessage.deserialize(s
  * Finds a Rebar item in this inventory. Use this to find Rebar items instead of traditional
  * find methods, because this will compare Rebar IDs.
  *
+ * @param targetItemId The item id to find. Items will be compared by their Rebar ID
+ * @return The slot containing the item, or null if no item was found
+ */
+fun Inventory.findRebar(targetItemId: NamespacedKey): Int? = RebarRegistry.ITEMS[targetItemId]?.let { findRebar(it) }
+
+/**
+ * Finds a Rebar item in this inventory. Use this to find Rebar items instead of traditional
+ * find methods, because this will compare Rebar IDs.
+ *
  * @param targetItem The item to find. Items will be compared by their Rebar ID
  * @return The slot containing the item, or null if no item was found
  */

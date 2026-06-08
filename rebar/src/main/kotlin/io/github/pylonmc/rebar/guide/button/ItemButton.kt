@@ -1,15 +1,16 @@
 package io.github.pylonmc.rebar.guide.button
 
+import io.github.pylonmc.rebar.config.RebarConfig
 import io.github.pylonmc.rebar.guide.pages.item.ItemRecipesPage
 import io.github.pylonmc.rebar.guide.pages.item.ItemUsagesPage
 import io.github.pylonmc.rebar.guide.pages.research.ResearchItemsPage
 import io.github.pylonmc.rebar.i18n.RebarArgument
-import io.github.pylonmc.rebar.item.RebarItem
 import io.github.pylonmc.rebar.item.RebarItemSchema
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
 import io.github.pylonmc.rebar.item.research.Research.Companion.canCraft
 import io.github.pylonmc.rebar.item.research.Research.Companion.canUse
-import io.github.pylonmc.rebar.item.research.Research.Companion.guideHints
+import io.github.pylonmc.rebar.content.guide.RebarGuide.Companion.guideHints
+import io.github.pylonmc.rebar.content.guide.RebarGuide.Companion.playGuideSound
 import io.github.pylonmc.rebar.item.research.Research.Companion.researchPoints
 import io.github.pylonmc.rebar.recipe.RecipeInput
 import io.github.pylonmc.rebar.util.gui.unit.UnitFormat
@@ -117,6 +118,7 @@ class ItemButton private constructor(
                     val page = ItemRecipesPage(currentStack)
                     if (page.pages.isNotEmpty()) {
                         page.open(player)
+                        player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                     }
                 }
 
@@ -135,6 +137,7 @@ class ItemButton private constructor(
                                 item.item.notifyWindows()
                             }
                         }
+                        player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                     }
                 }
 
@@ -142,6 +145,7 @@ class ItemButton private constructor(
                     val page = ItemUsagesPage(currentStack)
                     if (page.pages.isNotEmpty()) {
                         page.open(player)
+                        player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                     }
                 }
 
@@ -149,6 +153,7 @@ class ItemButton private constructor(
                     val itemSchema = RebarItemSchema.fromStack(currentStack)
                     if (itemSchema != null && itemSchema.research != null && !player.canUse(itemSchema)) {
                         ResearchItemsPage(itemSchema.research!!).open(player)
+                        player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                     }
                 }
 
@@ -157,6 +162,7 @@ class ItemButton private constructor(
                     val stack = getCheatItemStack(currentStack, click)
                     stack.amount = stack.maxStackSize
                     player.setItemOnCursor(stack)
+                    player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                 }
 
                 ClickType.DROP -> {
@@ -165,8 +171,10 @@ class ItemButton private constructor(
                     stack.amount = 1
                     if (player.itemOnCursor.isEmpty) {
                         player.setItemOnCursor(stack)
+                        player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                     } else if (player.itemOnCursor.isSimilar(stack)) {
                         player.itemOnCursor.add()
+                        player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                     }
                 }
 
@@ -175,6 +183,7 @@ class ItemButton private constructor(
                     val stack = getCheatItemStack(currentStack, click)
                     stack.amount = stack.maxStackSize
                     player.dropItem(stack)
+                    player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                 }
 
                 ClickType.SWAP_OFFHAND -> {
@@ -182,6 +191,7 @@ class ItemButton private constructor(
                     val stack = getCheatItemStack(currentStack, click)
                     stack.amount = 1
                     player.give(stack)
+                    player.playGuideSound(RebarConfig.GuideConfig.CLICK_BUTTON_SOUND)
                 }
 
                 else -> {}
