@@ -215,7 +215,7 @@ object BlockStorage : Listener {
      */
     @JvmStatic
     fun getByKey(key: NamespacedKey): Collection<RebarBlock> =
-        RebarRegistry.BLOCKS[key]?.let { getBySchema(it) }.orEmpty()
+        getBySchema(RebarRegistry.BLOCKS.getOrThrow(key))
 
     /**
      * Returns whether the block at [blockPosition] is a Rebar block.
