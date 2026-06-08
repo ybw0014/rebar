@@ -221,8 +221,8 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
                 if (result.style().color() == null) result.color(NamedTextColor.WHITE) else result
             }
             editData(DataComponentTypes.LORE) { lore ->
-                editPersistentDataContainer { pdc -> pdc.set(originalLoreKey, loreType, lore.lines())}
-                val newLore = lore.lines().flatMap { line ->
+                val originalLore = lore.lines()
+                val newLore = originalLore.flatMap { line ->
                     if (!isRebarOrAddon(line)) return@flatMap listOf(line)
                     val concatenatedArguments: MutableList<TranslationArgumentLike> = arguments.toMutableList()
                     if (line is TranslatableComponent) {
@@ -234,6 +234,12 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
                         wrapLine(it)
                     }
                 }
+
+                if (originalLore == newLore) {
+                    return
+                }
+
+                editPersistentDataContainer { pdc -> pdc.set(originalLoreKey, loreType, originalLore) }
                 ItemLore.lore(newLore)
             }
         }
