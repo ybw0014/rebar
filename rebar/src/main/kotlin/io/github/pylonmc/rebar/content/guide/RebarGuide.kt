@@ -107,7 +107,7 @@ class RebarGuide(stack: ItemStack) : RebarItem(stack), InteractRebarItemHandler 
             rebarKey("fluids"),
             {
                 RebarRegistry.FLUIDS.filter { it.key !in hiddenFluids }
-                    .map { FluidButton(it) }
+                    .map { FluidButton.of(it) }
                     .toMutableList()
             }
         ) {}
