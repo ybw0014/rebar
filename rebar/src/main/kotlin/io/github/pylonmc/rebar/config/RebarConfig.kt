@@ -117,11 +117,22 @@ object RebarConfig {
     object WailaConfig {
 
         @JvmStatic
-        val ENABLED
-            get() = TICK_INTERVAL > 0 && ENABLED_TYPES.isNotEmpty()
+        val ENABLED = config.getOrThrow("waila.enabled", ConfigAdapter.BOOLEAN)
 
         @JvmField
-        val TICK_INTERVAL = config.getOrThrow("waila.tick-interval", ConfigAdapter.INTEGER)
+        val CONTENTS_TICK_INTERVAL = config.getOrThrow("waila.contents-tick-interval", ConfigAdapter.INTEGER)
+
+        @JvmField
+        val TARGET_TICK_INTERVAL = config.getOrThrow("waila.target-tick-interval", ConfigAdapter.INTEGER)
+
+        @JvmField
+        val STATIONARY_TARGET_TICK_INTERVAL_MULTIPLIER = config.getOrThrow("waila.stationary-target-tick-interval-multiplier", ConfigAdapter.INTEGER)
+
+        init {
+            check(CONTENTS_TICK_INTERVAL > 0) { "waila.content-tick-interval must be greater than zero" }
+            check(TARGET_TICK_INTERVAL > 0) { "waila.fast-target-tick-interval must be greater than zero" }
+            check(STATIONARY_TARGET_TICK_INTERVAL_MULTIPLIER > 0) { "waila.stationary-target-tick-interval-multiplier must be greater than zero" }
+        }
 
         @JvmField
         val ENABLED_TYPES = config.getOrThrow("waila.enabled-types", ConfigAdapter.LIST.from(ConfigAdapter.ENUM.from(Waila.Type::class.java)))

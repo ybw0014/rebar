@@ -60,7 +60,6 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
 
     val nameTranslationKey = schema.nameTranslationKey
     val loreTranslationKey = schema.loreTranslationKey
-    val defaultWailaTranslationKey = schema.defaultWailaTranslationKey
 
     /**
      * Set this to `true` if your block should not have a [blockTextureEntity] for custom models/textures.
@@ -219,7 +218,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      * @return the WAILA configuration, or null if WAILA should not be shown for this block.
      */
     open fun getWaila(player: Player): WailaDisplay? {
-        return WailaDisplay(defaultWailaTranslationKey)
+        return WailaDisplay.of(this, player)
     }
 
     /**

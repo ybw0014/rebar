@@ -8,10 +8,10 @@ import io.github.pylonmc.rebar.async.PlayerScope
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
 import io.github.pylonmc.rebar.i18n.PlayerTranslationHandler
-import io.github.pylonmc.rebar.nms.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.item.ItemTypeWrapper
 import io.github.pylonmc.rebar.nms.entity.BlockTextureEntityImpl
 import io.github.pylonmc.rebar.nms.inventory.KeyedContainerListener
+import io.github.pylonmc.rebar.nms.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.nms.recipe.AccessibleCachedCheck
 import io.github.pylonmc.rebar.nms.recipe.HandlerRecipeBookClick
 import io.github.pylonmc.rebar.util.position.BlockPosition
@@ -64,7 +64,7 @@ import org.bukkit.persistence.PersistentDataContainer
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.reflect.Field
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.max
