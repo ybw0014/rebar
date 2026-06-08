@@ -8,17 +8,19 @@ import io.github.pylonmc.rebar.async.PlayerScope
 import io.github.pylonmc.rebar.block.RebarBlock
 import io.github.pylonmc.rebar.entity.packet.BlockTextureEntity
 import io.github.pylonmc.rebar.i18n.PlayerTranslationHandler
-import io.github.pylonmc.rebar.nms.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.item.ItemTypeWrapper
 import io.github.pylonmc.rebar.nms.entity.BlockTextureEntityImpl
 import io.github.pylonmc.rebar.nms.inventory.KeyedContainerListener
+import io.github.pylonmc.rebar.nms.packet.PlayerPacketHandler
 import io.github.pylonmc.rebar.nms.recipe.AccessibleCachedCheck
 import io.github.pylonmc.rebar.nms.recipe.HandlerRecipeBookClick
+import io.github.pylonmc.rebar.nms.recipe.RecipeMapper
 import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.papermc.paper.adventure.PaperAdventure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
+import net.minecraft.advancements.AdvancementRewards.Builder.recipe
 import net.minecraft.commands.arguments.item.ItemParser
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
@@ -35,6 +37,7 @@ import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity
 import net.minecraft.world.level.block.state.properties.Property
 import net.minecraft.world.phys.BlockHitResult
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.World
@@ -42,29 +45,24 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.CraftEquipmentSlot
 import org.bukkit.craftbukkit.CraftRegistry
+import org.bukkit.craftbukkit.CraftServer
 import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.craftbukkit.block.CraftBlock
 import org.bukkit.craftbukkit.entity.CraftEntity
 import org.bukkit.craftbukkit.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.entity.CraftPlayer
-import org.bukkit.craftbukkit.inventory.CraftInventory
-import org.bukkit.craftbukkit.inventory.CraftInventoryView
-import org.bukkit.craftbukkit.inventory.CraftItemStack
-import org.bukkit.craftbukkit.inventory.CraftItemType
+import org.bukkit.craftbukkit.inventory.*
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer
 import org.bukkit.craftbukkit.util.CraftNamespacedKey
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryView
-import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.*
 import org.bukkit.persistence.PersistentDataContainer
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.reflect.Field
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.max
@@ -307,6 +305,35 @@ object NmsAccessorImpl : NmsAccessor {
             val nmsDirection = CraftBlock.blockFaceToNotch(blockFace) ?: throw IllegalArgumentException("Invalid block face $blockFace")
             val nmsLoc = nmsPos.center.add(nmsDirection.unitVec3.scale(0.5))
             nmsPlayer.gameMode.useItemOn(nmsPlayer, level, nmsStack, nmsHand, BlockHitResult(nmsLoc, nmsDirection, nmsPos, false))
+        }
+    }
+
+    override fun hasRecipe(key: NamespacedKey): Boolean {
+        return MinecraftServer.getServer().recipeManager.recipes.byKey(CraftNamespacedKey.toResourceKey(Registries.RECIPE, key)) != null
+    }
+
+    override fun registerRecipes(recipes: Iterable<Recipe>, finalize: Boolean) {
+        val nmsRecipes = recipes.map(RecipeMapper::convertBukkitRecipe)
+        val recipeManager = MinecraftServer.getServer().recipeManager
+        for (recipe in nmsRecipes) {
+            recipeManager.recipes.addRecipe(recipe)
+        }
+
+        if (finalize) {
+            recipeManager.finalizeRecipeLoading()
+        }
+    }
+
+    override fun unregisterRecipes(recipes: Iterable<NamespacedKey>, finalize: Boolean) {
+        val recipeManager = MinecraftServer.getServer().recipeManager
+        var anyRemoved = false
+        for (recipeKey in recipes) {
+            val id = CraftNamespacedKey.toResourceKey(Registries.RECIPE, recipeKey)
+            anyRemoved = recipeManager.recipes.removeRecipe(id) || anyRemoved
+        }
+
+        if (finalize && anyRemoved) {
+            recipeManager.finalizeRecipeLoading()
         }
     }
 }
