@@ -104,8 +104,7 @@ object RebarConfig {
     object WailaConfig {
 
         @JvmStatic
-        val ENABLED
-            get() = ENABLED_TYPES.isNotEmpty()
+        val ENABLED = config.getOrThrow("waila.enabled", ConfigAdapter.BOOLEAN)
 
         @JvmField
         val CONTENTS_TICK_INTERVAL = config.getOrThrow("waila.contents-tick-interval", ConfigAdapter.INTEGER)

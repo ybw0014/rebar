@@ -42,6 +42,8 @@ confetti-creeper:
   confetti-lifetime: 600
 
 waila:
+  enabled: true
+
   # The interval (in Minecraft ticks), between the player's target block/entity being updated
   target-tick-interval: 6
 
@@ -54,7 +56,7 @@ waila:
   contents-tick-interval: 2
 
   # The WAILA display types players can choose between
-  # Set to an empty list to disable WAILA entirely
+  # If this is set to an empty list, players will not have any WAILA, but WAILA placeholders will still work
   enabled-types:
     - actionbar
     - bossbar
