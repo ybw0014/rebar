@@ -20,6 +20,7 @@ import io.github.pylonmc.rebar.item.builder.ItemStackBuilder
 import io.github.pylonmc.rebar.nms.NmsAccessor
 import io.github.pylonmc.rebar.registry.RebarRegistry
 import io.github.pylonmc.rebar.util.IMMEDIATE_FACES
+import io.github.pylonmc.rebar.util.isChunkLoaded
 import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.github.pylonmc.rebar.util.position.position
 import io.github.pylonmc.rebar.util.rebarKey
@@ -29,14 +30,11 @@ import io.papermc.paper.datacomponent.DataComponentTypes
 import net.kyori.adventure.key.Key
 import org.bukkit.*
 import org.bukkit.block.Block
-import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataContainer
-import org.bukkit.util.Transformation
-import org.joml.Vector3f
 
 /**
  * Represents a Rebar block in the world.
@@ -63,7 +61,6 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
 
     val nameTranslationKey = schema.nameTranslationKey
     val loreTranslationKey = schema.loreTranslationKey
-    val defaultWailaTranslationKey = schema.defaultWailaTranslationKey
 
     /**
      * Set this to `true` if your block should not have a [blockTextureEntity] for custom models/textures.
@@ -96,6 +93,9 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
     }
 
     val defaultItem = RebarRegistry.ITEMS[schema.key]
+
+    val isChunkLoaded: Boolean
+        get() = block.isChunkLoaded
 
     /**
      * This constructor is called when a *new* block is created in the world.
@@ -150,7 +150,7 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
      */
     protected open fun setupBlockTexture(entity: BlockTextureEntity): BlockTextureEntity = entity.apply {
         // TODO: Add a way to easily just change the transformation of the entity, without having to override this method entirely
-        val item = getBlockTextureItem() ?: ItemStack(Material.BARRIER)
+        val item = getBlockTextureItem() ?: ItemStack.of(Material.BARRIER)
         item.setData(DataComponentTypes.ITEM_MODEL, Key.key("air"))
         itemStack = item
         itemDisplayTransform = ItemDisplay.ItemDisplayTransform.FIXED
@@ -163,7 +163,7 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
      */
     fun refreshBlockTextureItem() {
         blockTextureEntity?.let {
-            it.itemStack = getBlockTextureItem() ?: ItemStack(Material.BARRIER)
+            it.itemStack = getBlockTextureItem() ?: ItemStack.of(Material.BARRIER)
         }
     }
 
@@ -219,7 +219,7 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
      * @return the WAILA configuration, or null if WAILA should not be shown for this block.
      */
     override fun getWaila(player: Player): WailaDisplay? {
-        return WailaDisplay(defaultWailaTranslationKey)
+        return WailaDisplay.of(this, player)
     }
 
     /**
