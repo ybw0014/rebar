@@ -356,13 +356,13 @@ class Waila private constructor(private val player: Player, playerConfig: Player
         }
 
         private fun removeOverrides(block: RebarBlock) {
-            blockOverrides.values.removeIf { supplier -> supplier is RebarBlockWailaSupplier && supplier.source == block }
-            entityOverrides.values.removeIf { supplier -> supplier is RebarBlockWailaSupplier && supplier.source == block }
+            blockOverrides.values.removeIf { it === block }
+            entityOverrides.values.removeIf { it === block }
         }
 
         private fun removeOverrides(entity: RebarEntity<*>) {
-            blockOverrides.values.removeIf { supplier -> supplier is RebarEntityWailaSupplier && supplier.source == entity }
-            entityOverrides.values.removeIf { supplier -> supplier is RebarEntityWailaSupplier && supplier.source == entity }
+            blockOverrides.values.removeIf { it === entity }
+            entityOverrides.values.removeIf { it === entity }
         }
 
         @EventHandler(priority = EventPriority.MONITOR)

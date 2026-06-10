@@ -13,7 +13,6 @@ import io.github.pylonmc.rebar.util.position.ChunkPosition
 import io.github.pylonmc.rebar.util.position.position
 import io.github.pylonmc.rebar.util.rebarKey
 import io.github.pylonmc.rebar.util.rotateVectorToFace
-import io.github.pylonmc.rebar.waila.RebarBlockWailaSupplier
 import io.github.pylonmc.rebar.waila.Waila
 import io.github.pylonmc.rebar.waila.WailaDisplay
 import org.bukkit.Color
@@ -289,7 +288,7 @@ interface SimpleRebarMultiblock : RebarMultiblock, GhostBlockHolderRebarBlock, E
             removeGhostBlock(getRotatedPosition(position))
         }
         for (position in components.keys) {
-            Waila.addWailaOverride(getMultiblockBlock(position), RebarBlockWailaSupplier(this as RebarBlock))
+            Waila.addWailaOverride(getMultiblockBlock(position), this as RebarBlock)
         }
     }
 
