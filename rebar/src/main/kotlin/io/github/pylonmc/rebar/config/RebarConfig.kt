@@ -13,6 +13,9 @@ object RebarConfig {
     private val config = ConfigSection.copyResource(Rebar, "config.yml")
 
     @JvmField
+    val BYPASS_VERSION_CHECK = config.getOrThrow("bypass-version-check", ConfigAdapter.BOOLEAN)
+
+    @JvmField
     val DEFAULT_TICK_INTERVAL = config.getOrThrow("default-tick-interval", ConfigAdapter.INTEGER)
 
     @JvmField

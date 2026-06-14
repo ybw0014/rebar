@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.FallingBlock
 import org.bukkit.entity.Interaction
@@ -95,10 +96,21 @@ object Rebar : JavaPlugin(), RebarAddon {
             logger.severe("!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!")
             logger.severe("You are running Rebar on Minecraft version $actualVersion")
             logger.severe("This build of Rebar expects Minecraft version $expectedVersion")
-            logger.severe("Rebar may run fine, but you may encounter bugs ranging from mild to catastrophic")
-            logger.severe("Please update your Rebar version accordingly")
             logger.severe("Please see https://github.com/pylonmc/rebar/releases for available Rebar versions")
+            try {
+                if (RebarConfig.BYPASS_VERSION_CHECK) {
+                    logger.severe("Bypass version set to true in config; proceeding anyway")
+                } else {
+                    logger.severe("Rebar will refuse to start")
+                    logger.severe("You can attempt to start anyway by setting bypass-version-check to true in the config")
+                }
+            } catch (e: Exception){
+                throw RuntimeException("Error while getting value of bypass-version-check", e)
+            }
             logger.severe("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            if (!RebarConfig.BYPASS_VERSION_CHECK) {
+                throw RuntimeException("The server is running $actualVersion but Rebar expected $expectedVersion")
+            }
         }
 
         InvUI.getInstance().setPlugin(this)
