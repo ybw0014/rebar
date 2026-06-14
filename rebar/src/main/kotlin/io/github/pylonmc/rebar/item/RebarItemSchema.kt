@@ -13,7 +13,6 @@ import io.github.pylonmc.rebar.util.findConstructorMatching
 import io.github.pylonmc.rebar.util.getAddon
 import io.github.pylonmc.rebar.util.position.position
 import io.github.pylonmc.rebar.util.rebarKey
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes.blockPosition
 import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -63,8 +62,6 @@ class RebarItemSchema @JvmOverloads internal constructor(
 
     val research: Research?
         get() = RebarRegistry.RESEARCHES.find { key in it.unlocks }
-
-    val researchBypassPermission = "rebar.item.${key.namespace}.${key.key}"
 
     @JvmSynthetic
     internal val loadConstructor: MethodHandle = itemClass.findConstructorMatching(ItemStack::class.java)
