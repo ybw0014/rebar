@@ -26,6 +26,7 @@ import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.translation.GlobalTranslator
 import net.kyori.adventure.translation.Translator
 import org.apache.commons.lang3.LocaleUtils
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.event.EventHandler
@@ -92,6 +93,9 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
         translationCache.clear()
         translations.clear()
         loadTranslations()
+        for (player in Bukkit.getOnlinePlayers()) {
+            NmsAccessor.instance.resendInventory(player)
+        }
     }
 
     override fun canTranslate(key: String, locale: Locale): Boolean {
@@ -130,7 +134,7 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
             if (parts.size < 2) return null
             val (addon, key) = parts
             if (addon != addonNamespace) return null
-            val translations = findTranslations(locale) ?: return null
+            val translations = findTranslations(locale) ?: findTranslations(this.addon.defaultLanguage) ?: return null
             val translation = translations.get(key, ConfigAdapter.STRING) ?: return null
             customMiniMessage.deserialize(translation)
         }
@@ -146,7 +150,6 @@ class RebarTranslator private constructor(private val addon: RebarAddon) : Trans
                 .sortedByDescending { it.weight }
         }
         return Locale.lookup(languageRange, this.translations.keys)?.let(translations::get)
-            ?: findTranslations(addon.defaultLanguage)
     }
 
     override fun name(): Key = addon.key
