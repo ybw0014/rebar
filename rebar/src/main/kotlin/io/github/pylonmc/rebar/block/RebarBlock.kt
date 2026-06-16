@@ -25,6 +25,7 @@ import io.github.pylonmc.rebar.util.position.BlockPosition
 import io.github.pylonmc.rebar.util.position.position
 import io.github.pylonmc.rebar.util.rebarKey
 import io.github.pylonmc.rebar.waila.WailaDisplay
+import io.github.pylonmc.rebar.waila.WailaSupplier
 import io.papermc.paper.datacomponent.DataComponentTypes
 import net.kyori.adventure.key.Key
 import org.bukkit.*
@@ -49,7 +50,7 @@ import org.bukkit.persistence.PersistentDataContainer
  *
  * @see BlockStorage
  */
-open class RebarBlock private constructor(val block: Block) : Keyed {
+open class RebarBlock private constructor(val block: Block) : WailaSupplier, Keyed {
 
     /**
      * All the data needed to create or load the block.
@@ -217,7 +218,7 @@ open class RebarBlock private constructor(val block: Block) : Keyed {
      *
      * @return the WAILA configuration, or null if WAILA should not be shown for this block.
      */
-    open fun getWaila(player: Player): WailaDisplay? {
+    override fun getWaila(player: Player): WailaDisplay? {
         return WailaDisplay.of(this, player)
     }
 
