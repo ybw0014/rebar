@@ -607,7 +607,7 @@ object BlockStorage : Listener {
             } else if (block.schema.key.isFromAddon(addon)) {
                 RebarBlockSchema.schemaCache[block.block.position] = PhantomBlock.schema
                 RebarBlock.serialize(block, block.block.chunk.persistentDataContainer.adapterContext)?.let { pdc ->
-                    PhantomBlock(pdc, block.schema.key, block.block)
+                    PhantomBlock(pdc, block.schema.key, block.block, true)
                 }
             } else {
                 null

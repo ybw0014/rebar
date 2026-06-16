@@ -190,8 +190,9 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
     /**
      * Returns the item that should be used to display the block's texture.
      *
-     * By default, returns the item with the same key as the block, marked with the
-     * [rebarBlockTextureEntityKey]. The item will also have custom model data with
+     * By default, returns the rebar item with the same key as the block, marked with the
+     * [rebarBlockTextureEntityKey], or if there is no matching rebar item, an item with
+     * the block material & key. The item will also have custom model data with
      * the vanilla block state properties of the block, merged with any custom
      * properties provided by the block. (see [getBlockTextureProperties])
      * This allows resource packs to provide different models/textures for different
@@ -202,14 +203,23 @@ open class RebarBlock private constructor(val block: Block) : WailaSupplier, Key
      *
      * @return the item that should be used to display the block's texture
      */
-    open fun getBlockTextureItem() = defaultItem?.getItemStack()?.let { ItemStackBuilder(it) }?.apply {
-        editPdc { it.set(rebarBlockTextureEntityKey, RebarSerializers.BOOLEAN, true) }
-        val properties = NmsAccessor.instance.getStateProperties(block, getBlockTextureProperties())
-        for ((property, value) in properties) {
-            addCustomModelDataString("$property=$value")
+    open fun getBlockTextureItem(): ItemStack? {
+        val builder = if (defaultItem != null) {
+            ItemStackBuilder.of(defaultItem.getItemStack())
+        } else {
+            ItemStackBuilder.of(schema.material)
+                .addCustomModelDataString(key.toString())
         }
-        set(DataComponentTypes.ITEM_MODEL, Key.key("air"))
-    }?.build()
+
+        return builder.apply {
+            editPdc { it.set(rebarBlockTextureEntityKey, RebarSerializers.BOOLEAN, true) }
+            val properties = NmsAccessor.instance.getStateProperties(block, getBlockTextureProperties())
+            for ((property, value) in properties) {
+                addCustomModelDataString("$property=$value")
+            }
+            set(DataComponentTypes.ITEM_MODEL, Key.key("air"))
+        }.build()
+    }
 
     /**
      * WAILA is the text that shows up when looking at a block to tell you what the block is.
