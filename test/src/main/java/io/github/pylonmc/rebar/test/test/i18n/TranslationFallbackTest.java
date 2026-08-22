@@ -12,16 +12,15 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests per-key fallback to the addon's default language (see pylonmc/rebar#591).
- *
- * The test addon ships an incomplete zh_cn.yml: test.translation.default_only only
- * exists in en.yml, so the zh_CN locale should resolve it from the default language.
+ * Tests per-key fallback from a regional locale to its language and then the
+ * addon's default language (see pylonmc/rebar#591).
  */
 public class TranslationFallbackTest extends SyncTest {
 
     private static final String PRESENT_BOTH = "rebartest.test.translation.present_both";
     private static final String DEFAULT_ONLY = "rebartest.test.translation.default_only";
     private static final String MISSING_EVERYWHERE = "rebartest.test.translation.missing_everywhere";
+    private static final String PREFER_LANG = "rebartest.test.translation.prefer_lang";
 
     @Override
     protected void test() {
@@ -36,6 +35,10 @@ public class TranslationFallbackTest extends SyncTest {
 
         // Locale with no file at all keeps the file-level fallback behavior
         assertThat(render(translator, DEFAULT_ONLY, Locale.FRENCH)).isEqualTo("English fallback value");
+
+        // Keys missing from the matched file resolve from the language-level file (zh)
+        // before the default language
+        assertThat(render(translator, PREFER_LANG, Locale.SIMPLIFIED_CHINESE)).isEqualTo("语言层优先值");
 
         // Default language itself is unaffected
         assertThat(render(translator, PRESENT_BOTH, Locale.ENGLISH)).isEqualTo("English value");
